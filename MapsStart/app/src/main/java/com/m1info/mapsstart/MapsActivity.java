@@ -5,10 +5,12 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -20,23 +22,29 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.OpeningHours;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.model.PlaceLikelihood;
+import com.google.android.libraries.places.api.model.RectangularBounds;
+import com.google.android.libraries.places.api.model.TypeFilter;
 import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest;
 import com.google.android.libraries.places.api.net.FindCurrentPlaceResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnInfoWindowClickListener {
 
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 0;
     private GoogleMap mMap;
@@ -52,6 +60,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private List[] mLikelyPlaceAttributions;
     private LatLng[] mLikelyPlaceLatLngs;
     private List[] mLikelyPlaceTypes;
+    private HashMap<String,InfoMarker> listInfoMarker = new HashMap<String,InfoMarker>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +78,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+
 
     }
     private void getLocationPermission() {
@@ -178,6 +189,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
+
+
         updateLocationUI();
 
         // Get the current location of the device and set the position of the map.
@@ -185,11 +198,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         showCurrentPlace();
 
-
-
-        // Add a marker in Sydney and move the camera
-
+        mMap.setOnInfoWindowClickListener(this);
     }
+
 
     private void showCurrentPlace() {
         if (mMap == null) {
@@ -198,8 +209,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         if (mLocationPermissionGranted) {
             // Use fields to define the data types to return.
-            List<Place.Field> placeFields = Arrays.asList(Place.Field.NAME, Place.Field.ADDRESS,
-                    Place.Field.LAT_LNG);
+            List<Place.Field> placeFields = Arrays.asList(Place.Field.NAME, Place.Field.ADDRESS, Place.Field.TYPES ,Place.Field.LAT_LNG);
 
             // Use the builder to create a FindCurrentPlaceRequest.
             FindCurrentPlaceRequest request =
@@ -216,18 +226,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             Task<FindCurrentPlaceResponse> placeResult =
                     mPlacesClient.findCurrentPlace(request);
             Log.d(TAG,request.toString());
+
             placeResult.addOnCompleteListener (task -> {
                 if (task.isSuccessful() && task.getResult() != null) {
                     FindCurrentPlaceResponse likelyPlaces = task.getResult();
 
+
+
                     // Set the count, handling cases where less than 5 entries are returned.
+                    Log.d(TAG, "Taille likelyPlaces : " + likelyPlaces.getPlaceLikelihoods().size());
+                    Log.d(TAG, "===============================" );
+
                     int count;
                     if (likelyPlaces.getPlaceLikelihoods().size() < 10) {
                         count = likelyPlaces.getPlaceLikelihoods().size();
                     } else {
                         count = 10;
                     }
-
                     int i = 0;
                     mLikelyPlaceNames = new String[count];
                     mLikelyPlaceTypes = new List[count];
@@ -235,19 +250,36 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     mLikelyPlaceAttributions = new List[count];
                     mLikelyPlaceLatLngs = new LatLng[count];
 
+                    Place.Type supermarketCheck = Place.Type.SUPERMARKET;
+
                     for (PlaceLikelihood placeLikelihood : likelyPlaces.getPlaceLikelihoods()) {
-                        // Build a list of likely places to show the user.
-                        mLikelyPlaceNames[i] = placeLikelihood.getPlace().getName();
-                        //Log.d("Types",""+ placeLikelihood.getPlace().getTypes().toString());
-                        mLikelyPlaceAddresses[i] = placeLikelihood.getPlace().getAddress();
-                        mLikelyPlaceAttributions[i] = placeLikelihood.getPlace()
-                                .getAttributions();
-                        mLikelyPlaceLatLngs[i] = placeLikelihood.getPlace().getLatLng();
-                        mMap.addMarker(new MarkerOptions().position(mLikelyPlaceLatLngs[i]).title(mLikelyPlaceNames[i]));
-                        i++;
-                        if (i > (count - 1)) {
-                            break;
-                        }
+                        List<Place.Type> typesP = placeLikelihood.getPlace().getTypes();
+                        Log.d(TAG, "Type : " + typesP);
+                        Log.d(TAG, "Nom : " + placeLikelihood.getPlace().getName());
+                        Log.d(TAG, "Adresse :  " + placeLikelihood.getPlace().getAddress());
+                        Log.d(TAG, "Attributions : " + placeLikelihood.getPlace().getAttributions());
+                        Log.d(TAG, "LatLng :  " + placeLikelihood.getPlace().getLatLng());
+                        Log.d(TAG, "===============================");
+//                        if(placeLikelihood.getPlace().getTypes().contains(supermarketCheck)) {
+                            // Build a list of likely places to show the user.
+                            mLikelyPlaceNames[i] = placeLikelihood.getPlace().getName();
+                            mLikelyPlaceTypes[i] = placeLikelihood.getPlace().getTypes();
+                            mLikelyPlaceAddresses[i] = placeLikelihood.getPlace().getAddress();
+                            mLikelyPlaceAttributions[i] = placeLikelihood.getPlace().getAttributions();
+                            mLikelyPlaceLatLngs[i] = placeLikelihood.getPlace().getLatLng();
+                            mMap.addMarker(new MarkerOptions().position(mLikelyPlaceLatLngs[i]).title(mLikelyPlaceNames[i]).snippet("Supermarché au : " + mLikelyPlaceAddresses[i]));
+
+                            // Stocker les informations que l'on souhaite pour "InfoMarkerActivity"
+                            OpeningHours opHours = placeLikelihood.getPlace().getOpeningHours();
+                            String phone = placeLikelihood.getPlace().getPhoneNumber();
+                            listInfoMarker.put(mLikelyPlaceNames[i],new InfoMarker(mLikelyPlaceNames[i],  mLikelyPlaceTypes[i], mLikelyPlaceAddresses[i],phone));
+
+                            i++;
+                            if (i > (count - 1)) {
+                                break;
+                            }
+//                        } endIf
+
                     }
 
                     // Show a dialog offering the user the list of likely places, and add a
@@ -272,4 +304,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+
+
+    @Override
+    public void onInfoWindowClick(Marker marker) {
+
+        Intent intent = new Intent(MapsActivity.this, InfoMarkerActivity.class);
+        intent.putExtra("titleMarker", marker.getTitle());
+        intent.putExtra("listInfoMarker", listInfoMarker);
+        startActivity(intent);
+
+//        Toast.makeText(this, "Info window clicked",
+//                Toast.LENGTH_SHORT).show();
+    }
 }
