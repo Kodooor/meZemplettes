@@ -5,10 +5,12 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -76,6 +78,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
     }
+    public void onButtonClick(View view) {
+
+        Intent intent=new Intent(MapsActivity.this,AjouterListeCourse.class);
+        startActivityForResult(intent, 2);// Activity is started with requestCode 2
+    }
+
     private void getLocationPermission() {
         /*
          * Request location permission, so that we can get the location of the
@@ -253,19 +261,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         Log.d(TAG, "Attributions : " + placeLikelihood.getPlace().getAttributions());
                         Log.d(TAG, "LatLng :  " + placeLikelihood.getPlace().getLatLng());
                         Log.d(TAG, "===============================");
-                        if(placeLikelihood.getPlace().getTypes().contains(supermarketCheck)) {
+                       // if(placeLikelihood.getPlace().getTypes().contains(supermarketCheck)) {
                             // Build a list of likely places to show the user.
                             mLikelyPlaceNames[i] = placeLikelihood.getPlace().getName();
                             mLikelyPlaceTypes[i] = placeLikelihood.getPlace().getTypes();
                             mLikelyPlaceAddresses[i] = placeLikelihood.getPlace().getAddress();
                             mLikelyPlaceAttributions[i] = placeLikelihood.getPlace().getAttributions();
                             mLikelyPlaceLatLngs[i] = placeLikelihood.getPlace().getLatLng();
-                            mMap.addMarker(new MarkerOptions().position(mLikelyPlaceLatLngs[i]).title(mLikelyPlaceNames[i]).snippet("Supermarché au : " + mLikelyPlaceAddresses[i]));
+                            mMap.addMarker(new MarkerOptions().position(mLikelyPlaceLatLngs[i]).title(mLikelyPlaceNames[i]).snippet(mLikelyPlaceAddresses[i]));
                             i++;
                             if (i > (count - 1)) {
                                 break;
                             }
-                        }
+                 //       }
 
                     }
 
