@@ -2,6 +2,7 @@ package com.m1info.mapsstart;
 
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
@@ -29,6 +30,10 @@ public class AjouterListeCourse extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_liste_course);
 
+        Intent intent = getIntent();
+        String storeName = intent.getStringExtra("storeName");
+        EditText nomCommerce = (EditText) findViewById(R.id.nomCommerce);
+        nomCommerce.setText(storeName);
         listview = findViewById(R.id.elemCourse);
         final ArrayAdapter<String> adapter = new ArrayAdapter<>(AjouterListeCourse.this, android.R.layout.simple_list_item_1);
         listview.setAdapter(adapter);

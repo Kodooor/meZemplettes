@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:map="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
@@ -15,9 +15,11 @@
         tools:context=".MapsActivity" />
 
     <Button
+        android:id="@+id/ajouter"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/ajouter_une_liste"
         android:onClick="onButtonClick"
-        />
-</LinearLayout>
+        android:text="@string/ajouter_une_liste"
+        android:visibility="invisible"
+        android:layout_alignParentBottom="true" />
+</RelativeLayout>

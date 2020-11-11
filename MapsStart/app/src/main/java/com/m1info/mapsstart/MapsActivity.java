@@ -11,6 +11,8 @@ import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -22,6 +24,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -41,7 +44,7 @@ import java.util.List;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
 
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 0;
     private GoogleMap mMap;
@@ -57,6 +60,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private List[] mLikelyPlaceAttributions;
     private LatLng[] mLikelyPlaceLatLngs;
     private List[] mLikelyPlaceTypes;
+    private String storeName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +85,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onButtonClick(View view) {
 
         Intent intent=new Intent(MapsActivity.this,AjouterListeCourse.class);
+        intent.putExtra("storeName", storeName);
         startActivityForResult(intent, 2);// Activity is started with requestCode 2
     }
 
@@ -197,6 +202,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         getDeviceLocation();
 
         showCurrentPlace();
+        googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener()
+        {
+            @Override
+            public void onMapClick(LatLng arg0)
+            {
+                Button ajouterButton = (Button) findViewById(R.id.ajouter);
+                ajouterButton.setVisibility(View.INVISIBLE);
+            }
+        });
     }
 
 
@@ -239,10 +253,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     Log.d(TAG, "===============================" );
 
                     int count;
-                    if (likelyPlaces.getPlaceLikelihoods().size() < 10) {
+                    if (likelyPlaces.getPlaceLikelihoods().size() < 20) {
                         count = likelyPlaces.getPlaceLikelihoods().size();
                     } else {
-                        count = 10;
+                        count = 20;
                     }
                     int i = 0;
                     mLikelyPlaceNames = new String[count];
@@ -252,28 +266,32 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     mLikelyPlaceLatLngs = new LatLng[count];
 
                     Place.Type supermarketCheck = Place.Type.SUPERMARKET;
+                    Place.Type storeCheck = Place.Type.STORE;
 
                     for (PlaceLikelihood placeLikelihood : likelyPlaces.getPlaceLikelihoods()) {
                         List<Place.Type> typesP = placeLikelihood.getPlace().getTypes();
-                        Log.d(TAG, "Type : " + typesP);
-                        Log.d(TAG, "Nom : " + placeLikelihood.getPlace().getName());
-                        Log.d(TAG, "Adresse :  " + placeLikelihood.getPlace().getAddress());
-                        Log.d(TAG, "Attributions : " + placeLikelihood.getPlace().getAttributions());
-                        Log.d(TAG, "LatLng :  " + placeLikelihood.getPlace().getLatLng());
-                        Log.d(TAG, "===============================");
-                       // if(placeLikelihood.getPlace().getTypes().contains(supermarketCheck)) {
+
+                       if(placeLikelihood.getPlace().getTypes().contains(supermarketCheck) || placeLikelihood.getPlace().getTypes().contains(storeCheck)) {
                             // Build a list of likely places to show the user.
+                               Log.d(TAG, "Type : " + typesP);
+                               Log.d(TAG, "Nom : " + placeLikelihood.getPlace().getName());
+                               Log.d(TAG, "Adresse :  " + placeLikelihood.getPlace().getAddress());
+                               Log.d(TAG, "Attributions : " + placeLikelihood.getPlace().getAttributions());
+                               Log.d(TAG, "LatLng :  " + placeLikelihood.getPlace().getLatLng());
+                               Log.d(TAG, "===============================");
                             mLikelyPlaceNames[i] = placeLikelihood.getPlace().getName();
                             mLikelyPlaceTypes[i] = placeLikelihood.getPlace().getTypes();
                             mLikelyPlaceAddresses[i] = placeLikelihood.getPlace().getAddress();
                             mLikelyPlaceAttributions[i] = placeLikelihood.getPlace().getAttributions();
                             mLikelyPlaceLatLngs[i] = placeLikelihood.getPlace().getLatLng();
-                            mMap.addMarker(new MarkerOptions().position(mLikelyPlaceLatLngs[i]).title(mLikelyPlaceNames[i]).snippet(mLikelyPlaceAddresses[i]));
+                            MarkerOptions markerOptions = new MarkerOptions().position(mLikelyPlaceLatLngs[i]).title(mLikelyPlaceNames[i]).snippet(mLikelyPlaceAddresses[i]);
+                            mMap.addMarker(markerOptions);
+                            mMap.setOnMarkerClickListener(this);
                             i++;
                             if (i > (count - 1)) {
                                 break;
                             }
-                 //       }
+                       }
 
                     }
 
@@ -297,6 +315,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             // Prompt the user for permission.
             getLocationPermission();
         }
+    }
+
+    public boolean onMarkerClick(final Marker marker) {
+        Button ajouterButton = (Button) findViewById(R.id.ajouter);
+        ajouterButton.setVisibility(View.VISIBLE);
+        storeName = marker.getTitle();
+        Log.d(TAG,""+marker.getTitle());
+
+        return false;
     }
 
 }
