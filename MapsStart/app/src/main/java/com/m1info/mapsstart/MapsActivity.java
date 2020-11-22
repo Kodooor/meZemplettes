@@ -82,10 +82,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
     }
+
     public void onButtonClick(View view) {
 
         Intent intent=new Intent(MapsActivity.this,AjouterListeCourse.class);
         intent.putExtra("storeName", storeName);
+        startActivityForResult(intent, 2);// Activity is started with requestCode 2
+    }
+
+    public void onSecondButtonClick(View view) {
+
+        Intent intent=new Intent(MapsActivity.this,ListesCourse.class);
         startActivityForResult(intent, 2);// Activity is started with requestCode 2
     }
 
@@ -327,3 +334,4 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 }
+

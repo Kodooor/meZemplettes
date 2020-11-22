@@ -14,12 +14,8 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
 
 public class AjouterListeCourse extends Activity {
 
@@ -28,12 +24,13 @@ public class AjouterListeCourse extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_liste_course);
+        setContentView(R.layout.activity_ajouter_liste_course);
 
         Intent intent = getIntent();
         String storeName = intent.getStringExtra("storeName");
         EditText nomCommerce = (EditText) findViewById(R.id.nomCommerce);
         nomCommerce.setText(storeName);
+
         listview = findViewById(R.id.elemCourse);
         final ArrayAdapter<String> adapter = new ArrayAdapter<>(AjouterListeCourse.this, android.R.layout.simple_list_item_1);
         listview.setAdapter(adapter);
@@ -50,8 +47,9 @@ public class AjouterListeCourse extends Activity {
                                 MesCoursesManager mcm = new MesCoursesManager(AjouterListeCourse.this);
                                 mcm.open();
                                 mcm.supElemCourseParProduit(item);
-                                lireElements(v);                            }
-                            })
+                                lireElements();
+                            }
+                        })
                         .setNegativeButton(android.R.string.no, null)
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .show();
@@ -59,7 +57,7 @@ public class AjouterListeCourse extends Activity {
                 return true;
             }
         });
-
+        lireElements();
     }
 
     public void ajouterElement(View v) {
@@ -68,37 +66,55 @@ public class AjouterListeCourse extends Activity {
 
         MesCoursesManager mcm = new MesCoursesManager(this);
         mcm.open();
-        mcm.addElemCourse(new MesCourses(0, nomCommerce.getText().toString(), produitCommerce.getText().toString()));
-        lireElements(v);
+        long intReturn = mcm.addElemCourse(new MesCourses(0, nomCommerce.getText().toString(), produitCommerce.getText().toString()));
+        // PENSER A REGARDER QUE CEST AUSIS LE MEME MAGASIN
+        if(intReturn == -2){
+            Toast.makeText(AjouterListeCourse.this, "Article déjà présent dans votre liste!", Toast.LENGTH_LONG).show();
+        }
+        // NE FONCTIONNE PAS QUAND L'ARTICLE VIDE EST LE 1ER ARTICLE AJOUTE
+        if(intReturn == -3){
+            Toast.makeText(AjouterListeCourse.this, "Veuillez renseigner un produit !", Toast.LENGTH_LONG).show();
+        }
+
+        lireElements();
         mcm.close();
 
     }
 
-    public void supprimerTout(View v){
-        MesCoursesManager mcm = new MesCoursesManager(this);
-        mcm.open();
-        mcm.suppTout();
-        lireElements(v);
-        mcm.close();
-    }
-
-    public void lireElements(View v) {
+    public void lireElements() {
         listview = findViewById(R.id.elemCourse);
         final ArrayAdapter<String> adapter = new ArrayAdapter<>(AjouterListeCourse.this, android.R.layout.simple_list_item_1);
         listview.setAdapter(adapter);
 
-        // Listing des enregistrements de la table
         MesCoursesManager mcm = new MesCoursesManager(this);
         mcm.open();
-        Cursor c = mcm.getAllListeCourses();
-        if (c.moveToFirst()) {
-            do {
-                adapter.add(c.getString(c.getColumnIndex(MesCoursesManager.KEY_NOM_PRODUIT)));
+
+        Intent intent = getIntent();
+
+        if(intent.hasExtra("Magasin")) {
+            String donnee = intent.getStringExtra("Magasin"); // on récupère la valeur associée à la clé
+            // Listing des enregistrements de la table
+            ArrayList<String> listePourMagasin = mcm.getListePourMagasin(donnee);
+            for (int i = 0; i < listePourMagasin.size(); ++i) {
+                adapter.add(listePourMagasin.get(i));
             }
-            while (c.moveToNext());
+        }else {
+            if (intent.hasExtra("storeName")) {
+                String donnee = intent.getStringExtra("storeName"); // on récupère la valeur associée à la clé
+                // Listing des enregistrements de la table
+                ArrayList<String> listePourMagasin = mcm.getListePourMagasin(donnee);
+                for (int i = 0; i < listePourMagasin.size(); ++i) {
+                    adapter.add(listePourMagasin.get(i));
+                }
+            }
         }
+
         adapter.notifyDataSetChanged();
-        c.close(); // fermeture du curseur
     }
 
+    public void validerListeCourse(View v){
+        Intent intent = new Intent(AjouterListeCourse.this, ListesCourse.class);
+        startActivity(intent);
+
+    }
 }

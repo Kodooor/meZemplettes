@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content">
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Edition liste de course "
+            android:layout_marginLeft="62dp"
+            android:layout_marginTop="10dp"
+            android:textSize="25dp"/>
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Magasin : "/>
+        <EditText
+        android:id="@+id/nomCommerce"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Element à acheter : "/>
+        <EditText
+            android:id="@+id/produitCommerce"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Ajouter Produit"
+        android:onClick="ajouterElement"/>
+
+    <ListView
+        android:id="@+id/elemCourse"
+        android:layout_width="fill_parent"
+        android:layout_height="438dp" />
+
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/cardview_dark_background"
+        android:textColor="@color/cardview_light_background"
+        android:layout_margin="5dp"
+        android:layout_alignParentBottom="true"
+        android:text="Valider"
+        android:id="@+id/validerListeCourse"
+        android:onClick="validerListeCourse"/>
+</LinearLayout>
+
+
+
+

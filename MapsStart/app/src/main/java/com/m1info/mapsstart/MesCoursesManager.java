@@ -6,6 +6,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.util.Log;
+import android.widget.Toast;
+
+import java.util.ArrayList;
 
 public class MesCoursesManager {
 
@@ -41,13 +44,28 @@ public class MesCoursesManager {
 
 
     public long addElemCourse(MesCourses mesCourses) {
+        // Tous les produits
+        Cursor c = getProduitListeCourses();
+
         // Ajout d'un enregistrement dans la table
         ContentValues values = new ContentValues();
         values.put("nomMagasin", mesCourses.getNomMagasin());
         values.put("nomProduit", mesCourses.getNomProduit());
 
+        // Parcours des produits de la table pour voir si il existe déjà ou si il est vide
+        // Auquel cas on fais un toast et on ne l'ajoute pas
+        if (c.moveToFirst()) {
+            do {
+                if (c.getString(c.getColumnIndex(MesCoursesManager.KEY_NOM_PRODUIT)).equals(values.get("nomProduit").toString())){
+                    return -2;
+                }
+                if (values.get("nomProduit").toString().equals("")) {
+                    return -3;
+                }
+            }
+            while (c.moveToNext());
+        }
         // insert() retourne l'id du nouvel enregistrement inséré, ou -1 en cas d'erreur
-        Log.d("TEEEEEEST", "Valeurs: \n" + values.toString());
 
         return db.insert("Courses",null,values);
     }
@@ -74,26 +92,34 @@ public class MesCoursesManager {
         return db.delete("Courses", null, null);
     }
 
-    public MesCourses getElement(int id) {
+    public ArrayList<String> getListePourMagasin(String nomMagasin) {
         // Retourne la ligne dont l'id est passé en paramètre
 
-        MesCourses mc=new MesCourses(0,"","");
+        ArrayList<String> listePourMagasin = new ArrayList<>();
 
-        Cursor c = db.rawQuery("SELECT * FROM Courses WHERE "+KEY_ID_COURSES+"="+id, null);
+        Cursor c = db.rawQuery("SELECT * FROM Courses", null);
         if (c.moveToFirst()) {
-            mc.setIdCourses(c.getInt(c.getColumnIndex("idCourse")));
-            mc.setNomMagasin(c.getString(c.getColumnIndex("nomMagasin")));
-            mc.setNomProduit(c.getString(c.getColumnIndex("nomProduit")));
-            c.close();
+            do {
+                if(c.getString(c.getColumnIndex("nomMagasin")).equals(nomMagasin)) {
+                    listePourMagasin.add(c.getString(c.getColumnIndex("nomProduit")));
+                }
+            } while (c.moveToNext());
+
         }
-
-        return mc;
+        c.close();
+        return listePourMagasin;
     }
 
-    public Cursor getAllListeCourses() {
+    public Cursor getMagasinListeCourses() {
         // sélection de tous les enregistrements de la table
-        return db.rawQuery("SELECT * FROM Courses", null);
+        return db.rawQuery("SELECT DISTINCT(nomMagasin) FROM Courses", null);
     }
+
+    public Cursor getProduitListeCourses() {
+        // sélection de tous les enregistrements de la table
+        return db.rawQuery("SELECT nomProduit FROM Courses", null);
+    }
+
 
 }
 
