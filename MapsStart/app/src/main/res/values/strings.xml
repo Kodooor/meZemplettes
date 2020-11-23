@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MapsStart</string>
+    <string name="app_name">EasyCourses</string>
     <string name="title_activity_maps">EasyCourses</string>
     <string name="default_info_title">Titre par défaut</string>
     <string name="default_info_snippet">Défaut snippet</string>
