@@ -30,6 +30,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.OpeningHours;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.model.PlaceLikelihood;
 import com.google.android.libraries.places.api.model.RectangularBounds;
@@ -41,11 +42,12 @@ import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnInfoWindowClickListener {
 
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 0;
     private GoogleMap mMap;
@@ -61,6 +63,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private List[] mLikelyPlaceAttributions;
     private LatLng[] mLikelyPlaceLatLngs;
     private List[] mLikelyPlaceTypes;
+    private HashMap<String,InfoMarker> listInfoMarker = new HashMap<String,InfoMarker>();
     private String storeName;
 
     @Override
@@ -219,6 +222,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 ajouterButton.setVisibility(View.INVISIBLE);
             }
         });
+        mMap.setOnInfoWindowClickListener(this);
     }
 
 
@@ -292,6 +296,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             mLikelyPlaceAddresses[i] = placeLikelihood.getPlace().getAddress();
                             mLikelyPlaceAttributions[i] = placeLikelihood.getPlace().getAttributions();
                             mLikelyPlaceLatLngs[i] = placeLikelihood.getPlace().getLatLng();
+
+
+                           mMap.addMarker(new MarkerOptions().position(mLikelyPlaceLatLngs[i]).title(mLikelyPlaceNames[i]).snippet(mLikelyPlaceAddresses[i]));
+
+                           mMap.addMarker(new MarkerOptions().position(mLikelyPlaceLatLngs[i]).title(mLikelyPlaceNames[i]).snippet("Supermarché au : " + mLikelyPlaceAddresses[i]));
+
+                           // Stocker les informations que l'on souhaite pour "InfoMarkerActivity"
+                           OpeningHours opHours = placeLikelihood.getPlace().getOpeningHours();
+                           String phone = placeLikelihood.getPlace().getPhoneNumber();
+                           listInfoMarker.put(mLikelyPlaceNames[i],new InfoMarker(mLikelyPlaceNames[i],  mLikelyPlaceTypes[i], mLikelyPlaceAddresses[i],phone));
+
+
                             MarkerOptions markerOptions = new MarkerOptions().position(mLikelyPlaceLatLngs[i]).title(mLikelyPlaceNames[i]).snippet(mLikelyPlaceAddresses[i]);
                             mMap.addMarker(markerOptions);
                             mMap.setOnMarkerClickListener(this);
@@ -335,6 +351,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
 
         return false;
+    }
+
+    @Override
+    public void onInfoWindowClick(Marker marker) {
+
+        Intent intent = new Intent(MapsActivity.this, InfoMarkerActivity.class);
+        intent.putExtra("titleMarker", marker.getTitle());
+        intent.putExtra("listInfoMarker", listInfoMarker);
+        startActivity(intent);
+
+//        Toast.makeText(this, "Info window clicked",
+//                Toast.LENGTH_SHORT).show();
     }
 
 }
