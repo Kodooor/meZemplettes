@@ -326,9 +326,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public boolean onMarkerClick(final Marker marker) {
         Button ajouterButton = (Button) findViewById(R.id.ajouter);
-        ajouterButton.setVisibility(View.VISIBLE);
-        storeName = marker.getTitle();
-        Log.d(TAG,""+marker.getTitle());
+        ajouterButton.setVisibility(View.INVISIBLE);
+        if(!marker.getTitle().equals("Your are here !")) {
+            ajouterButton.setVisibility(View.VISIBLE);
+            storeName = marker.getTitle();
+            Log.d(TAG, "" + marker.getTitle());
+        }
 
         return false;
     }
