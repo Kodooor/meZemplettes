@@ -1,25 +1,29 @@
 package com.m1info.mapsstart;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
+public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>{
 
-    private ArrayList<String> mesCourses;
+    public ArrayList<String> mesCourses;
+    // Notre variable du type de l'interface
     private static ClickListener clickListener;
+
 
     public void setOnItemClickListener(ClickListener clickListener) {
         RecyclerViewAdapter.clickListener = clickListener;
     }
-
+    // Interface pour définir les fonction onClick onLongClick
     public interface ClickListener {
         void onItemClick(int position, View v);
 
@@ -46,11 +50,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         String course = mesCourses.get(position);
 
         TextView textView = holder.magasin;
-        textView.setText(course);
-
-        Button button = holder.messageButton;
-        button.setText("Accéder à la liste");
-        button.setEnabled(true);
+        textView.setText("Accéder à la liste  ->  " + course);
     }
 
     @Override
@@ -65,16 +65,15 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
         public TextView magasin;
-        public Button messageButton;
 
         public ViewHolder(View itemView) {
 
             super(itemView);
+
+            magasin = (TextView) itemView.findViewById(R.id.magasin);
+
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);
-            magasin = (TextView) itemView.findViewById(R.id.magasin);
-            messageButton = (Button) itemView.findViewById(R.id.message_button);
-
         }
 
         @Override
@@ -87,6 +86,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             clickListener.onItemLongClick(getAdapterPosition(), v);
             return false;
         }
+
+
     }
 
 }

@@ -10,12 +10,15 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class ListesCourse extends Activity {
 
@@ -38,8 +41,8 @@ public class ListesCourse extends Activity {
             while (c.moveToNext());
         }
         RecyclerViewAdapter adapter = new RecyclerViewAdapter(mesCourses);
-
         rvMesCourses.setAdapter(adapter);
+
         rvMesCourses.setLayoutManager(new LinearLayoutManager(this));
         adapter.setOnItemClickListener(new RecyclerViewAdapter.ClickListener(){
             @Override
@@ -73,10 +76,41 @@ public class ListesCourse extends Activity {
                 Log.d("HOHOHOHOHOH", "onItemLongClick pos = " + position);
             }
         });
+        // Drag and drop / Swipe
+        ItemTouchHelper.Callback itemToucherHelperCallback = new ItemTouchHelper.Callback() {
+            @Override
+            public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                int dragFlags = ItemTouchHelper.UP | ItemTouchHelper.DOWN;
+                int swipeFlags = ItemTouchHelper.START | ItemTouchHelper.END;
+                return makeMovementFlags(dragFlags, swipeFlags);
+            }
 
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                Collections.swap(adapter.mesCourses, viewHolder.getAdapterPosition(), target.getAdapterPosition());
+                adapter.notifyItemMoved(viewHolder.getAdapterPosition(), target.getAdapterPosition());
+                return true;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                int position = viewHolder.getAdapterPosition();
+                String item = mesCourses.get(position);
+                MesCoursesManager mcm = new MesCoursesManager(ListesCourse.this);
+                mcm.open();
+                mcm.supprimerListeCourse(item);
+                adapter.mesCourses.remove(position);
+                adapter.notifyItemRemoved(position);
+                Toast toast = new Toast(ListesCourse.this);
+                toast.makeText(ListesCourse.this, "Element supprimé", Toast.LENGTH_LONG).show();
+            }
+        };
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(itemToucherHelperCallback);
+        itemTouchHelper.attachToRecyclerView(rvMesCourses);
         afficherLesListesCourses();
+    }
 
-    };
+
 
     public void afficherLesListesCourses() {
 
