@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.ApiException;
@@ -52,7 +53,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private boolean mLocationPermissionGranted;
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private Location mLastKnownLocation;
-    private float DEFAULT_ZOOM = 1;
+    private float DEFAULT_ZOOM = 16;
     private LatLng mDefaultLocation ;
     private PlacesClient mPlacesClient;
     private String[] mLikelyPlaceAddresses;
@@ -164,11 +165,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         mLastKnownLocation = (Location) task.getResult();
                         Log.d(TAG,mLastKnownLocation.getLatitude()+" "+mLastKnownLocation.getLongitude());
                         mMap.addMarker(new MarkerOptions().position(new LatLng(mLastKnownLocation.getLatitude(),
-                                mLastKnownLocation.getLongitude())).title("Your are here !").snippet("and snippet").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
+                                mLastKnownLocation.getLongitude())).title("Votre position").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
 
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                                 new LatLng(mLastKnownLocation.getLatitude(),
-                                        mLastKnownLocation.getLongitude()), 13));
+                                        mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
                     } else {
                         Log.d(TAG, "Current location is null. Using defaults.");
                         Log.e(TAG, "Exception: %s", task.getException());
@@ -214,7 +215,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onMapClick(LatLng arg0)
             {
-                Button ajouterButton = (Button) findViewById(R.id.ajouter);
+                ImageButton ajouterButton = (ImageButton) findViewById(R.id.ajouter);
                 ajouterButton.setVisibility(View.INVISIBLE);
             }
         });
@@ -325,9 +326,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public boolean onMarkerClick(final Marker marker) {
-        Button ajouterButton = (Button) findViewById(R.id.ajouter);
+        ImageButton ajouterButton = (ImageButton) findViewById(R.id.ajouter);
         ajouterButton.setVisibility(View.INVISIBLE);
-        if(!marker.getTitle().equals("Your are here !")) {
+        if(!marker.getTitle().equals("Votre position")) {
             ajouterButton.setVisibility(View.VISIBLE);
             storeName = marker.getTitle();
             Log.d(TAG, "" + marker.getTitle());

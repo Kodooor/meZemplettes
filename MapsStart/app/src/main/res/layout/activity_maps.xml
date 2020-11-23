@@ -1,69 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:map="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<!--<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--    xmlns:map="http://schemas.android.com/apk/res-auto"-->
+<!--    xmlns:tools="http://schemas.android.com/tools"-->
+<!--    android:orientation="vertical"-->
+<!--    android:layout_width="fill_parent"-->
+<!--    android:layout_height="match_parent">-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_height="wrap_content">
 
     <fragment
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
-        android:layout_height="667dp"
-        tools:context=".MapsActivity" />
-
-    <Button
-        android:id="@+id/ajouter"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="onButtonClick"
-        android:text="@string/ajouter_une_liste"
-        android:visibility="invisible"
-        android:layout_alignParentBottom="true" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Voir toutes les listes"
-        android:onClick="onSecondButtonClick"
-        android:layout_alignParentRight="true"/>
-</RelativeLayout>
-<!--<?xml version="1.0" encoding="utf-8"?>-->
-
-<!--<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
-<!--    xmlns:map="http://schemas.android.com/apk/res-auto"-->
-<!--    xmlns:tools="http://schemas.android.com/tools"-->
-<!--    android:orientation="vertical"-->
-<!--    android:layout_width="fill_parent"-->
-<!--    android:layout_height="fill_parent">-->
-
-<!--    <fragment-->
-<!--        android:id="@+id/map"-->
-<!--        android:name="com.google.android.gms.maps.SupportMapFragment"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="667dp"-->
+        android:layout_height="655dp"/>
 <!--        tools:context=".MapsActivity" />-->
 
-<!--    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
-<!--        android:orientation="horizontal"-->
-<!--        android:layout_width="fill_parent"-->
-<!--        android:layout_height="wrap_content">-->
-<!--    <Button-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:text="@string/ajouter_une_liste"-->
-<!--        android:onClick="onButtonClick" />-->
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center">
+        <ImageButton
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:adjustViewBounds="true"
+            android:background="@null"
+            android:onClick="onSecondButtonClick"
+            android:scaleType="centerInside"
+            android:src="@drawable/unnamed" />
 
-<!--    <Button-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:text="Voir toutes les listes"-->
-<!--        android:onClick="onSecondButtonClick"/>-->
-
-
-<!--    </LinearLayout>-->
-<!--</LinearLayout>-->
+        <ImageButton
+            android:id="@+id/ajouter"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center"
+            android:adjustViewBounds="true"
+            android:background="@null"
+            android:onClick="onButtonClick"
+            android:scaleType="centerInside"
+            android:src="@drawable/add"
+            android:visibility="invisible" />
+    </LinearLayout>
+</LinearLayout>
 
 
