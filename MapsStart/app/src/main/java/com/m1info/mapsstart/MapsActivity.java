@@ -166,7 +166,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         Log.d(TAG,mLastKnownLocation.getLatitude()+" "+mLastKnownLocation.getLongitude());
                         LatLng maPos = new LatLng(mLastKnownLocation.getLatitude(),
                                 mLastKnownLocation.getLongitude());
-                        mMap.addMarker(new MarkerOptions().position(maPos).title("Your are here !").snippet("and snippet").icon(BitmapDescriptorFactory.fromResource(R.drawable.me)));
+                        mMap.addMarker(new MarkerOptions().position(maPos).title("Votre position").icon(BitmapDescriptorFactory.fromResource(R.drawable.me)));
                         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
                                 new LatLng(mLastKnownLocation.getLatitude(),
                                         mLastKnownLocation.getLongitude()), 14f));
@@ -337,7 +337,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         ImageButton ajouterButton = (ImageButton) findViewById(R.id.ajouter);
         ajouterButton.setVisibility(View.INVISIBLE);
         if(!marker.getTitle().equals("Votre position")) {
-            Log.d(TAG, "alooooooooooooooooooooooooooooooooooooo");
             ajouterButton.setVisibility(View.VISIBLE);
             storeName = marker.getTitle();
             Log.d(TAG, "" + marker.getTitle());
