@@ -45,7 +45,7 @@ public class MesCoursesManager {
 
     public long addElemCourse(MesCourses mesCourses) {
         // Tous les produits
-        Cursor c = getProduitListeCourses();
+        Cursor c = getAllListeCourses();
 
         // Ajout d'un enregistrement dans la table
         ContentValues values = new ContentValues();
@@ -56,7 +56,7 @@ public class MesCoursesManager {
         // Auquel cas on fais un toast et on ne l'ajoute pas
         if (c.moveToFirst()) {
             do {
-                if (c.getString(c.getColumnIndex(MesCoursesManager.KEY_NOM_PRODUIT)).equals(values.get("nomProduit").toString())){
+                if (c.getString(c.getColumnIndex(MesCoursesManager.KEY_NOM_PRODUIT)).equals(values.get("nomProduit").toString()) && c.getString(c.getColumnIndex(MesCoursesManager.KEY_NOM_MAGASIN)).equals(values.get("nomMagasin"))){
                     return -2;
                 }
                 if (values.get("nomProduit").toString().equals("")) {
@@ -115,11 +115,13 @@ public class MesCoursesManager {
         return db.rawQuery("SELECT DISTINCT(nomMagasin) FROM Courses", null);
     }
 
-    public Cursor getProduitListeCourses() {
+    public Cursor getAllListeCourses() {
         // sélection de tous les enregistrements de la table
-        return db.rawQuery("SELECT nomProduit FROM Courses", null);
+        return db.rawQuery("SELECT nomMagasin, nomProduit FROM Courses", null);
     }
 
-
+    public void supprimerListeCourse(String nomMag){
+        db.delete("Courses", "nomMagasin" + " = ?", new String[]{String.valueOf(nomMag)});
+    }
 }
 
