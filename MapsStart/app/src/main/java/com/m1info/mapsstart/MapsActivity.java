@@ -164,12 +164,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         // Set the map's camera position to the current location of the device.
                         mLastKnownLocation = (Location) task.getResult();
                         Log.d(TAG,mLastKnownLocation.getLatitude()+" "+mLastKnownLocation.getLongitude());
-                        mMap.addMarker(new MarkerOptions().position(new LatLng(mLastKnownLocation.getLatitude(),
-                                mLastKnownLocation.getLongitude())).title("Votre position").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
-
-                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                        LatLng maPos = new LatLng(mLastKnownLocation.getLatitude(),
+                                mLastKnownLocation.getLongitude());
+                        mMap.addMarker(new MarkerOptions().position(maPos).title("Your are here !").snippet("and snippet").icon(BitmapDescriptorFactory.fromResource(R.drawable.me)));
+                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
                                 new LatLng(mLastKnownLocation.getLatitude(),
-                                        mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
+                                        mLastKnownLocation.getLongitude()), 14f));
+
+                        /*
+                        mMap.addMarker(new MarkerOptions().position(new LatLng(mLastKnownLocation.getLatitude(),mLastKnownLocation.getLongitude()+0.008)).title("Your are here !").snippet("and snippet").icon(BitmapDescriptorFactory.fromResource(R.drawable.supermarket)));
+                        mMap.addMarker(new MarkerOptions().position(new LatLng(mLastKnownLocation.getLatitude(),mLastKnownLocation.getLongitude()-0.008)).title("Your are here !").snippet("and snippet").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+                        mMap.addMarker(new MarkerOptions().position(new LatLng(mLastKnownLocation.getLatitude()+0.008,mLastKnownLocation.getLongitude())).title("Your are here !").snippet("and snippet").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+                        mMap.addMarker(new MarkerOptions().position(new LatLng(mLastKnownLocation.getLatitude()-0.008,mLastKnownLocation.getLongitude())).title("Your are here !").snippet("and snippet").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+                        */
+
                     } else {
                         Log.d(TAG, "Current location is null. Using defaults.");
                         Log.e(TAG, "Exception: %s", task.getException());
@@ -292,7 +300,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             mLikelyPlaceAddresses[i] = placeLikelihood.getPlace().getAddress();
                             mLikelyPlaceAttributions[i] = placeLikelihood.getPlace().getAttributions();
                             mLikelyPlaceLatLngs[i] = placeLikelihood.getPlace().getLatLng();
-                            MarkerOptions markerOptions = new MarkerOptions().position(mLikelyPlaceLatLngs[i]).title(mLikelyPlaceNames[i]).snippet(mLikelyPlaceAddresses[i]);
+                            MarkerOptions markerOptions = new MarkerOptions().position(mLikelyPlaceLatLngs[i]).title(mLikelyPlaceNames[i]).snippet(mLikelyPlaceAddresses[i]).icon(BitmapDescriptorFactory.fromResource(R.drawable.supermarket));
                             mMap.addMarker(markerOptions);
                             mMap.setOnMarkerClickListener(this);
                             i++;
@@ -329,6 +337,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         ImageButton ajouterButton = (ImageButton) findViewById(R.id.ajouter);
         ajouterButton.setVisibility(View.INVISIBLE);
         if(!marker.getTitle().equals("Votre position")) {
+            Log.d(TAG, "alooooooooooooooooooooooooooooooooooooo");
             ajouterButton.setVisibility(View.VISIBLE);
             storeName = marker.getTitle();
             Log.d(TAG, "" + marker.getTitle());
