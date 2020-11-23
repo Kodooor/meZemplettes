@@ -53,9 +53,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private boolean mLocationPermissionGranted;
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private Location mLastKnownLocation;
-    private float DEFAULT_ZOOM = 16;
+    private float DEFAULT_ZOOM = 1;
     private LatLng mDefaultLocation ;
-    private PlacesClient mPlacesClient;
     private String[] mLikelyPlaceAddresses;
     private String[] mLikelyPlaceNames;
     private List[] mLikelyPlaceAttributions;
@@ -67,28 +66,31 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        mDefaultLocation = new LatLng(47,1.9);
 
-        // Construct a FusedLocationProviderClient.
+        // Coordonées par défaut de l'application sur Berlin.
+        mDefaultLocation = new LatLng(52.530644,	13.383068);
+
+        // Construction du client permettant d'utiliser le FusedLocationProvider
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
-
-
-
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        // Obtention du SupportFragmentManager permettant de placer la map sur l'application.
+        // L'application attend aussi que la map soit synchronisée.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-
-
     }
 
+    // Fonction permettant la prise d'information sur le lieu actuellement selectionné
+    // et la création d'un intent vers l'activité AjouterListeCourse.
+    // L'intent prend le nom de ses extras permettant un saisie plus rapide d'une liste
+    // de course sur le lieu.
     public void onButtonClick(View view) {
 
         Intent intent=new Intent(MapsActivity.this,AjouterListeCourse.class);
         intent.putExtra("storeName", storeName);
-        startActivityForResult(intent, 2);// Activity is started with requestCode 2
+        startActivityForResult(intent, 2);
+
     }
 
     public void onSecondButtonClick(View view) {
@@ -97,12 +99,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         startActivityForResult(intent, 2);// Activity is started with requestCode 2
     }
 
+    // Requete permettant d'avoir la permission d'utiliser la localisation de l'appareil
+    // de l'utilisateur.
+    // Le resultat de cette permission est gardé par onRequestPermissionsResult.
     private void getLocationPermission() {
-        /*
-         * Request location permission, so that we can get the location of the
-         * device. The result of the permission request is handled by a callback,
-         * onRequestPermissionsResult.
-         */
+
         if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
                 android.Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
@@ -113,14 +114,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
         }
     }
+
+    // Resultat de la permission obtenue (ou pas) grace à la fonction précédante.
     @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
         mLocationPermissionGranted = false;
         switch (requestCode) {
             case PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
-                // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     mLocationPermissionGranted = true;
@@ -128,8 +129,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         }
         updateLocationUI();
+
     }
 
+    // Fonction permettant d'afficher la carte si et seulement si la permission
+    // d'utiliser la localisation de l'appareil a été accordée.
     private void updateLocationUI() {
         if (mMap == null) {
             return;
@@ -149,24 +153,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-
-
+    // Fonction permettant de marquer avec un Marker l'endroit sur lequel l'utilisateur se trouve.
     private void getDeviceLocation() {
-        /*
-         * Get the best and most recent location of the device, which may be null in rare
-         * cases when a location is not available.
-         */
+
         try {
             if (mLocationPermissionGranted) {
                 Task locationResult = mFusedLocationProviderClient.getLastLocation();
                 locationResult.addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
-                        // Set the map's camera position to the current location of the device.
+
                         mLastKnownLocation = (Location) task.getResult();
-                        Log.d(TAG,mLastKnownLocation.getLatitude()+" "+mLastKnownLocation.getLongitude());
+
+                        // Recuperation des coordonées dans un objet de type LatLng
                         LatLng maPos = new LatLng(mLastKnownLocation.getLatitude(),
                                 mLastKnownLocation.getLongitude());
+                        // Ajout du Marker a la position maPos
                         mMap.addMarker(new MarkerOptions().position(maPos).title("Votre position").icon(BitmapDescriptorFactory.fromResource(R.drawable.me)));
+                        // Animation de camera lors de l'ouverture de l'application. La caméra se dirige donc vers
+                        // les coordonées si toutes les permissions ont été accordées.
                         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
                                 new LatLng(mLastKnownLocation.getLatitude(),
                                         mLastKnownLocation.getLongitude()), 14f));
@@ -179,7 +183,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         */
 
                     } else {
-                        Log.d(TAG, "Current location is null. Using defaults.");
+                        Log.d(TAG, "Localisation null, utilisatation de la valeur par défaut");
                         Log.e(TAG, "Exception: %s", task.getException());
                         mLastKnownLocation.setAltitude(mDefaultLocation.latitude);
                         mLastKnownLocation.setLongitude(mDefaultLocation.longitude);
@@ -194,29 +198,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-
-
-
-
-
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
+    // Fonction permettant de gerer toutes actions faites sur la map.
     @Override
     public void onMapReady(GoogleMap googleMap) {
+
         mMap = googleMap;
-
         updateLocationUI();
-
-        // Get the current location of the device and set the position of the map.
         getDeviceLocation();
-
         showCurrentPlace();
         googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener()
         {
@@ -229,45 +217,42 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
     }
 
-
-
+    // Fonction permettant de gerer tous les supermarchés les plus proches dans lesquels
+    // l'utilisateur serait suceptible de faire ses courses.
     private void showCurrentPlace() {
         if (mMap == null) {
             return;
         }
 
         if (mLocationPermissionGranted) {
-            // Use fields to define the data types to return.
+
             List<Place.Field> placeFields = Arrays.asList(Place.Field.NAME, Place.Field.ADDRESS, Place.Field.TYPES ,Place.Field.LAT_LNG);
 
-            // Use the builder to create a FindCurrentPlaceRequest.
+            // Création du la requete FindCurrentPlace
             FindCurrentPlaceRequest request =
                     FindCurrentPlaceRequest.newInstance(placeFields);
 
-
-
-            // Get the likely places - that is, the businesses and other points of interest that
-            // are the best match for the device's current location.
+            // Clé d'API Google
             String apiKey = "AIzaSyCAg3UDXwGUIvN8FPK8hk8IN8Db0JF6NIw";
+            // Initialisation des places.
             Places.initialize(getApplicationContext(), apiKey);
             PlacesClient mPlacesClient = Places.createClient(this);
 
-
             @SuppressWarnings("MissingPermission") final
-            Task<FindCurrentPlaceResponse> placeResult =
-                    mPlacesClient.findCurrentPlace(request);
-            Log.d(TAG,request.toString());
+            Task<FindCurrentPlaceResponse> placeResult = mPlacesClient.findCurrentPlace(request);
+            /*Log.d(TAG,request.toString());*/
 
             placeResult.addOnCompleteListener (task -> {
                 if (task.isSuccessful() && task.getResult() != null) {
+                    // Les likelyPlaces sont les points d'interet qui "match" le plus avec
+                    // la localisation de l'appareil.
                     FindCurrentPlaceResponse likelyPlaces = task.getResult();
 
+                    /*Log.d(TAG, "Taille likelyPlaces : " + likelyPlaces.getPlaceLikelihoods().size());
+                    Log.d(TAG, "===============================" );*/
 
-
-                    // Set the count, handling cases where less than 5 entries are returned.
-                    Log.d(TAG, "Taille likelyPlaces : " + likelyPlaces.getPlaceLikelihoods().size());
-                    Log.d(TAG, "===============================" );
-
+                    // Permet d'avoir moins de 20 lieux autour de sa position, afin de ne pas
+                    // surcharger la map/
                     int count;
                     if (likelyPlaces.getPlaceLikelihoods().size() < 20) {
                         count = likelyPlaces.getPlaceLikelihoods().size();
@@ -284,55 +269,55 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     Place.Type supermarketCheck = Place.Type.SUPERMARKET;
                     Place.Type storeCheck = Place.Type.STORE;
 
+                    // Parcours des differents lieux trouvés
                     for (PlaceLikelihood placeLikelihood : likelyPlaces.getPlaceLikelihoods()) {
-                        List<Place.Type> typesP = placeLikelihood.getPlace().getTypes();
+
 
                        if(placeLikelihood.getPlace().getTypes().contains(supermarketCheck) || placeLikelihood.getPlace().getTypes().contains(storeCheck)) {
-                            // Build a list of likely places to show the user.
-                               Log.d(TAG, "Type : " + typesP);
-                               Log.d(TAG, "Nom : " + placeLikelihood.getPlace().getName());
-                               Log.d(TAG, "Adresse :  " + placeLikelihood.getPlace().getAddress());
-                               Log.d(TAG, "Attributions : " + placeLikelihood.getPlace().getAttributions());
-                               Log.d(TAG, "LatLng :  " + placeLikelihood.getPlace().getLatLng());
-                               Log.d(TAG, "===============================");
-                            mLikelyPlaceNames[i] = placeLikelihood.getPlace().getName();
-                            mLikelyPlaceTypes[i] = placeLikelihood.getPlace().getTypes();
-                            mLikelyPlaceAddresses[i] = placeLikelihood.getPlace().getAddress();
-                            mLikelyPlaceAttributions[i] = placeLikelihood.getPlace().getAttributions();
-                            mLikelyPlaceLatLngs[i] = placeLikelihood.getPlace().getLatLng();
-                            MarkerOptions markerOptions = new MarkerOptions().position(mLikelyPlaceLatLngs[i]).title(mLikelyPlaceNames[i]).snippet(mLikelyPlaceAddresses[i]).icon(BitmapDescriptorFactory.fromResource(R.drawable.supermarket));
-                            mMap.addMarker(markerOptions);
-                            mMap.setOnMarkerClickListener(this);
-                            i++;
-                            if (i > (count - 1)) {
-                                break;
-                            }
+                           /*List<Place.Type> typesP = placeLikelihood.getPlace().getTypes();
+                           Log.d(TAG, "Type : " + typesP);
+                           Log.d(TAG, "Nom : " + placeLikelihood.getPlace().getName());
+                           Log.d(TAG, "Adresse :  " + placeLikelihood.getPlace().getAddress());
+                           Log.d(TAG, "Attributions : " + placeLikelihood.getPlace().getAttributions());
+                           Log.d(TAG, "LatLng :  " + placeLikelihood.getPlace().getLatLng());
+                           Log.d(TAG, "===============================");*/
+
+                           // Construction des lieux dans leurs listes respectives.
+                           mLikelyPlaceNames[i] = placeLikelihood.getPlace().getName();
+                           mLikelyPlaceTypes[i] = placeLikelihood.getPlace().getTypes();
+                           mLikelyPlaceAddresses[i] = placeLikelihood.getPlace().getAddress();
+                           mLikelyPlaceAttributions[i] = placeLikelihood.getPlace().getAttributions();
+                           mLikelyPlaceLatLngs[i] = placeLikelihood.getPlace().getLatLng();
+
+                           // Ajout des Markers des lieux sur la map.
+                           MarkerOptions markerOptions = new MarkerOptions().position(mLikelyPlaceLatLngs[i]).title(mLikelyPlaceNames[i]).snippet(mLikelyPlaceAddresses[i]).icon(BitmapDescriptorFactory.fromResource(R.drawable.supermarket));
+                           mMap.addMarker(markerOptions);
+                           mMap.setOnMarkerClickListener(this);
+                           i++;
+                           if (i > (count - 1)) {
+                               break;
+                           }
                        }
-
                     }
-
-                    // Show a dialog offering the user the list of likely places, and add a
-                    // marker at the selected place.
                 }
                 else {
                     Log.e(TAG, "Exception: %s", task.getException());
                 }
             });
-        } else {
-            // The user has not granted permission.
-            Log.i(TAG, "The user did not grant location permission.");
-
-            // Add a default marker, because the user hasn't selected a place.
+        }
+        else {
+            Log.i(TAG, "L'utilisateur n'a pas donné la permission de localisation");
+            // Ajout de secours si l'utilisateur n'a pas donné la permission.
             mMap.addMarker(new MarkerOptions()
                     .title(getString(R.string.default_info_title))
                     .position(mDefaultLocation)
                     .snippet(getString(R.string.default_info_snippet)));
-
-            // Prompt the user for permission.
             getLocationPermission();
         }
     }
 
+    // Fonction permettant l'apparition du bouton "+" donnant accès à l'ajout d'une liste de courses
+    // quand l'utilisateur selectionne un supermarché.
     public boolean onMarkerClick(final Marker marker) {
         ImageButton ajouterButton = (ImageButton) findViewById(R.id.ajouter);
         ajouterButton.setVisibility(View.INVISIBLE);
@@ -341,7 +326,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             storeName = marker.getTitle();
             Log.d(TAG, "" + marker.getTitle());
         }
-
         return false;
     }
 
