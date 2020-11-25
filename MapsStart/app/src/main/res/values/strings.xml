@@ -6,4 +6,11 @@
     <string name="ajouter_une_liste">Ajouter une liste</string>
     <string name="adress">Adresse</string>
     <string name="phone">Téléphone</string>
+    <string name="rating">Note</string>
+    <string name="website">Site Web</string>
+    <string name="businessStatus">Status d\'ouverture</string>
+    <string name="opHours">Horaires d\'ouverture</string>
+    <string name="CLOSED_PERMANENTLY">Fermé définitivement</string>
+    <string name="CLOSED_TEMPORARILY">Fermé temporairement</string>
+    <string name="OPERATIONAL">Ouvert</string>
 </resources>

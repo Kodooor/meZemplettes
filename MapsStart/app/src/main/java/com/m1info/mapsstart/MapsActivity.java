@@ -8,6 +8,7 @@ import androidx.fragment.app.FragmentActivity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.media.Rating;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -40,6 +41,7 @@ import com.google.android.libraries.places.api.net.FindCurrentPlaceResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -65,6 +67,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private List[] mLikelyPlaceTypes;
     private HashMap<String,InfoMarker> listInfoMarker = new HashMap<String,InfoMarker>();
     private String storeName;
+    private String[] mLikelyPlacePhone;
+    private String[] mLikelyPlaceWebsite;
+    private String[] mLikelyPlaceBusinessStatus;
+    private String[] mLikelyPlaceRating;
+    private List<String>[] mLikelyPlaceOpHours;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -234,7 +241,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         if (mLocationPermissionGranted) {
             // Use fields to define the data types to return.
-            List<Place.Field> placeFields = Arrays.asList(Place.Field.NAME, Place.Field.ADDRESS, Place.Field.TYPES ,Place.Field.LAT_LNG);
+            List<Place.Field> placeFields = Arrays.asList(
+                    Place.Field.NAME,
+                    Place.Field.ADDRESS,
+                    Place.Field.TYPES ,
+                    Place.Field.LAT_LNG,
+//                    Place.Field.PHONE_NUMBER,
+                    Place.Field.RATING,
+//                    Place.Field.WEBSITE_URI,
+//                    Place.Field.OPENING_HOURS,
+                    Place.Field.BUSINESS_STATUS
+            );
 
             // Use the builder to create a FindCurrentPlaceRequest.
             FindCurrentPlaceRequest request =
@@ -277,6 +294,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     mLikelyPlaceAttributions = new List[count];
                     mLikelyPlaceLatLngs = new LatLng[count];
 
+                    mLikelyPlaceOpHours = new ArrayList[count];
+                    mLikelyPlaceWebsite = new String[count];
+                    mLikelyPlaceBusinessStatus = new String[count];
+                    mLikelyPlaceRating = new String[count];
+                    mLikelyPlacePhone = new String[count];
+
                     Place.Type supermarketCheck = Place.Type.SUPERMARKET;
                     Place.Type storeCheck = Place.Type.STORE;
 
@@ -290,6 +313,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                Log.d(TAG, "Adresse :  " + placeLikelihood.getPlace().getAddress());
                                Log.d(TAG, "Attributions : " + placeLikelihood.getPlace().getAttributions());
                                Log.d(TAG, "LatLng :  " + placeLikelihood.getPlace().getLatLng());
+                               Log.d(TAG, "phone :  " + placeLikelihood.getPlace().getPhoneNumber());
+                               Log.d(TAG, "rating :  " + placeLikelihood.getPlace().getRating());
+                               Log.d(TAG, "Website :  " + placeLikelihood.getPlace().getWebsiteUri());
+                               Log.d(TAG, "Business Status :  " + placeLikelihood.getPlace().getBusinessStatus());
                                Log.d(TAG, "===============================");
                             mLikelyPlaceNames[i] = placeLikelihood.getPlace().getName();
                             mLikelyPlaceTypes[i] = placeLikelihood.getPlace().getTypes();
@@ -298,15 +325,40 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             mLikelyPlaceLatLngs[i] = placeLikelihood.getPlace().getLatLng();
 
 
+                           mLikelyPlacePhone[i] = placeLikelihood.getPlace().getPhoneNumber();
+
+                           if(placeLikelihood.getPlace().getOpeningHours() != null)
+                               mLikelyPlaceOpHours[i] = placeLikelihood.getPlace().getOpeningHours().getWeekdayText();
+                           if(placeLikelihood.getPlace().getRating() != null)
+                               mLikelyPlaceRating[i] = String.valueOf(placeLikelihood.getPlace().getRating());
+                           if(placeLikelihood.getPlace().getWebsiteUri() != null)
+                               mLikelyPlaceWebsite[i] = placeLikelihood.getPlace().getWebsiteUri().toString();
+                           if(placeLikelihood.getPlace().getBusinessStatus() != null) {
+                               mLikelyPlaceBusinessStatus[i] = placeLikelihood.getPlace().getBusinessStatus().toString();
+                               //String status[] = {"CLOSED_PERMANENTLY","CLOSED_TEMPORARILY","OPERATIONAL"};
+                               switch (mLikelyPlaceBusinessStatus[i]) {
+                                   case "CLOSED_PERMANENTLY":
+                                       mLikelyPlaceBusinessStatus[i] = getString(R.string.CLOSED_PERMANENTLY);
+                                       break;
+                                   case "CLOSED_TEMPORARILY":
+                                       mLikelyPlaceBusinessStatus[i] = getString(R.string.CLOSED_TEMPORARILY);
+                                       break;
+                                   case "OPERATIONAL":
+                                       mLikelyPlaceBusinessStatus[i] = getString(R.string.OPERATIONAL);
+                                       break;
+                                   default:
+                                       break;
+                               }
+                           }
+
+
                            mMap.addMarker(new MarkerOptions().position(mLikelyPlaceLatLngs[i]).title(mLikelyPlaceNames[i]).snippet(mLikelyPlaceAddresses[i]));
 
                            mMap.addMarker(new MarkerOptions().position(mLikelyPlaceLatLngs[i]).title(mLikelyPlaceNames[i]).snippet("Supermarché au : " + mLikelyPlaceAddresses[i]));
 
-                           // Stocker les informations que l'on souhaite pour "InfoMarkerActivity"
-                           OpeningHours opHours = placeLikelihood.getPlace().getOpeningHours();
-                           String phone = placeLikelihood.getPlace().getPhoneNumber();
-                           listInfoMarker.put(mLikelyPlaceNames[i],new InfoMarker(mLikelyPlaceNames[i],  mLikelyPlaceTypes[i], mLikelyPlaceAddresses[i],phone));
-
+                           // On remplit les informations collectées via la requête dans un tableau, afin de remplir notre listInfoMarker
+                           String[] infos = {mLikelyPlaceNames[i], mLikelyPlaceAddresses[i],mLikelyPlacePhone[i],mLikelyPlaceRating[i],mLikelyPlaceWebsite[i],mLikelyPlaceBusinessStatus[i]};
+                           listInfoMarker.put(mLikelyPlaceNames[i],new InfoMarker(infos,mLikelyPlaceOpHours[i]));
 
                             MarkerOptions markerOptions = new MarkerOptions().position(mLikelyPlaceLatLngs[i]).title(mLikelyPlaceNames[i]).snippet(mLikelyPlaceAddresses[i]);
                             mMap.addMarker(markerOptions);
@@ -357,9 +409,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onInfoWindowClick(Marker marker) {
 
         Intent intent = new Intent(MapsActivity.this, InfoMarkerActivity.class);
-        intent.putExtra("titleMarker", marker.getTitle());
-        intent.putExtra("listInfoMarker", listInfoMarker);
-        startActivity(intent);
+        if(!marker.getTitle().equals("Votre position")) {
+            intent.putExtra("titleMarker", marker.getTitle());
+            intent.putExtra("listInfoMarker", listInfoMarker);
+            startActivity(intent);
+        }
 
 //        Toast.makeText(this, "Info window clicked",
 //                Toast.LENGTH_SHORT).show();
