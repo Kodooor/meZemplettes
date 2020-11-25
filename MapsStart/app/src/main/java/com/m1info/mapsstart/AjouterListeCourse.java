@@ -42,7 +42,7 @@ public class AjouterListeCourse extends Activity {
 
         //Spinner Filtre(dropdown)
         monFiltre = findViewById(R.id.filtre);
-        String[] filtre = new String[]{"","Fruits & Légumes", "Surgelé", "Boulangerie", "Viande", "Poissons", "Autres"};
+        String[] filtre = new String[]{"","Fruits & Légumes", "Surgelé", "Boulangerie", "Viande", "Poissons", "Crémerie", "Hygiène & Beauté", "Autres"};
         ArrayAdapter<String> adapterFiltre = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, rayons);
         monFiltre.setAdapter(adapterRayon);
 
