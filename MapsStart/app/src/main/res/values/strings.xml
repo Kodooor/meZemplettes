@@ -13,4 +13,13 @@
     <string name="CLOSED_PERMANENTLY">Fermé définitivement</string>
     <string name="CLOSED_TEMPORARILY">Fermé temporairement</string>
     <string name="OPERATIONAL">Ouvert</string>
+    <string name="Alerte">Alerte</string>
+    <string name="SuppItemListCourse">Voulez vous supprimer cet élément de votre liste de course ?</string>
+    <string name="ArticleDejaPresent">Article déjà présent dans votre liste !</string>
+    <string name="ProduitNonRenseigné">Veuillez renseigner un produit !</string>
+    <string name="SuppListCourse">Voulez vous supprimer cette liste de course ?</string>
+    <string name="ElemSupprimé">Element supprimé</string>
+
+
+
 </resources>

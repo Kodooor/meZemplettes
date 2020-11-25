@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">EasyCourses</string>
+    <string name="title_activity_maps">EasyCourses</string>
+    <string name="default_info_title">Standardtitel</string>
+    <string name="default_info_snippet">Standard Snippet</string>
+    <string name="ajouter_une_liste">Fügen Sie eine Liste hinzu</string>
+    <string name="adress">Adresse</string>
+    <string name="phone">Telefon</string>
+    <string name="rating">Bewertung</string>
+    <string name="website">Website</string>
+    <string name="businessStatus">Geschäftsstatus</string>
+    <string name="opHours">Öffnungszeiten</string>
+    <string name="CLOSED_PERMANENTLY">Permanent geschlossen</string>
+    <string name="CLOSED_TEMPORARILY">Vorübergehend geschlossen</string>
+    <string name="OPERATIONAL">Öffnen Sie</string>
+    <string name="Alerte">Aufmerksam</string>
+    <string name="SuppItemListCourse">Möchten Sie diesen Artikel von Ihrer Einkaufsliste entfernen?</string>
+    <string name="ArticleDejaPresent">Element bereits in Ihrer Liste!</string>
+    <string name="ProduitNonRenseigné">Bitte geben Sie ein Produkt ein!</string>
+    <string name="SuppListCourse">Möchten Sie diese Einkaufsliste löschen?</string>
+    <string name="ElemSupprimé">Element gelöscht</string>
+</resources>

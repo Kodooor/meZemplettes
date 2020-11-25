@@ -401,7 +401,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             storeName = marker.getTitle();
             Log.d(TAG, "" + marker.getTitle());
         }
-
         return false;
     }
 

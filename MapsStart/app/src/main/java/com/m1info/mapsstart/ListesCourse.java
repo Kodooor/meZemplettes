@@ -58,8 +58,8 @@ public class ListesCourse extends Activity {
             @Override
             public void onItemLongClick(int position, View v) {
                 new AlertDialog.Builder(ListesCourse.this)
-                        .setTitle("Alerte")
-                        .setMessage("Voulez vous supprimer cette liste de course ?")
+                        .setTitle(getText(R.string.Alerte))
+                        .setMessage(getText(R.string.SuppListCourse))
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 int itemPosition =  rvMesCourses.getChildLayoutPosition(v);
@@ -102,7 +102,7 @@ public class ListesCourse extends Activity {
                 adapter.mesCourses.remove(position);
                 adapter.notifyItemRemoved(position);
                 Toast toast = new Toast(ListesCourse.this);
-                toast.makeText(ListesCourse.this, "Element supprimé", Toast.LENGTH_LONG).show();
+                toast.makeText(ListesCourse.this, getText(R.string.ElemSupprimé), Toast.LENGTH_LONG).show();
             }
         };
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(itemToucherHelperCallback);

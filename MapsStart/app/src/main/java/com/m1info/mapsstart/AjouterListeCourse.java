@@ -39,8 +39,8 @@ public class AjouterListeCourse extends Activity {
             public boolean onItemLongClick(AdapterView<?> arg0, View v, int position, long id) {
 
                 new AlertDialog.Builder(AjouterListeCourse.this)
-                        .setTitle("Alerte")
-                        .setMessage("Voulez vous supprimer cet élément de votre liste de course ?")
+                        .setTitle(getText(R.string.Alerte))
+                        .setMessage(getText(R.string.SuppItemListCourse))
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 String item = (String) listview.getItemAtPosition(position);
@@ -69,11 +69,11 @@ public class AjouterListeCourse extends Activity {
         long intReturn = mcm.addElemCourse(new MesCourses(0, nomCommerce.getText().toString(), produitCommerce.getText().toString()));
         // PENSER A REGARDER QUE CEST AUSIS LE MEME MAGASIN
         if(intReturn == -2){
-            Toast.makeText(AjouterListeCourse.this, "Article déjà présent dans votre liste!", Toast.LENGTH_LONG).show();
+            Toast.makeText(AjouterListeCourse.this, getText((R.string.ArticleDejaPresent)), Toast.LENGTH_LONG).show();
         }
         // NE FONCTIONNE PAS QUAND L'ARTICLE VIDE EST LE 1ER ARTICLE AJOUTE
         if(intReturn == -3){
-            Toast.makeText(AjouterListeCourse.this, "Veuillez renseigner un produit !", Toast.LENGTH_LONG).show();
+            Toast.makeText(AjouterListeCourse.this, getText((R.string.ProduitNonRenseigné)), Toast.LENGTH_LONG).show();
         }
 
         lireElements();
