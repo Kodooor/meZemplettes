@@ -42,23 +42,51 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"/>
     </LinearLayout>
-    <Button
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Rayon : "/>
+        <Spinner
+            android:id="@+id/rayon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:spinnerMode="dropdown"/>
+
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="Ajouter Produit"
-        android:onClick="ajouterElement"/>
+        android:gravity="center">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ajouter Produit"
+            android:onClick="ajouterElement"/>
+        <Spinner
+            android:id="@+id/filtre"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:adjustViewBounds="true"
+            android:background="@drawable/filtre"
+            android:spinnerMode="dropdown" />
+    </LinearLayout>
 
     <ListView
         android:id="@+id/elemCourse"
         android:layout_width="fill_parent"
-        android:layout_height="438dp" />
+        android:layout_height="410dp" />
 
     <Button
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:background="@color/cardview_dark_background"
         android:textColor="@color/cardview_light_background"
-        android:layout_margin="5dp"
+        android:layout_margin="10dp"
         android:layout_alignParentBottom="true"
         android:text="Valider"
         android:id="@+id/validerListeCourse"

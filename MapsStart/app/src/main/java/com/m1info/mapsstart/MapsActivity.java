@@ -273,7 +273,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     for (PlaceLikelihood placeLikelihood : likelyPlaces.getPlaceLikelihoods()) {
 
 
-                       if(placeLikelihood.getPlace().getTypes().contains(supermarketCheck) || placeLikelihood.getPlace().getTypes().contains(storeCheck)) {
+//                       if(placeLikelihood.getPlace().getTypes().contains(supermarketCheck) || placeLikelihood.getPlace().getTypes().contains(storeCheck)) {
                            /*List<Place.Type> typesP = placeLikelihood.getPlace().getTypes();
                            Log.d(TAG, "Type : " + typesP);
                            Log.d(TAG, "Nom : " + placeLikelihood.getPlace().getName());
@@ -297,7 +297,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                            if (i > (count - 1)) {
                                break;
                            }
-                       }
+                       //}
                     }
                 }
                 else {

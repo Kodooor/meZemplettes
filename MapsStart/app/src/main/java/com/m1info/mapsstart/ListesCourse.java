@@ -127,7 +127,6 @@ public class ListesCourse extends Activity {
         if (c.moveToFirst()) {
             do {
                 mesCourses.add(c.getString(c.getColumnIndex(MesCoursesManager.KEY_NOM_MAGASIN)));
-                Log.d("TUTUTUTUTUTUTUTUTU",c.getString(c.getColumnIndex(MesCoursesManager.KEY_NOM_MAGASIN)));
             }
             while (c.moveToNext());
         }
