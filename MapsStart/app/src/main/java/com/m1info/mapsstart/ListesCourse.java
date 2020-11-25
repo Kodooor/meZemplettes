@@ -58,8 +58,8 @@ public class ListesCourse extends Activity {
             @Override
             public void onItemLongClick(int position, View v) {
                 new AlertDialog.Builder(ListesCourse.this)
-                        .setTitle(getText(R.string.Alerte))
-                        .setMessage(getText(R.string.SuppListCourse))
+                        .setTitle(R.string.Alerte)
+                        .setMessage(R.string.SuppListCourse)
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 int itemPosition =  rvMesCourses.getChildLayoutPosition(v);
@@ -102,7 +102,7 @@ public class ListesCourse extends Activity {
                 adapter.mesCourses.remove(position);
                 adapter.notifyItemRemoved(position);
                 Toast toast = new Toast(ListesCourse.this);
-                toast.makeText(ListesCourse.this, getText(R.string.ElemSupprimé), Toast.LENGTH_LONG).show();
+                toast.makeText(ListesCourse.this, R.string.ElemSupprimé, Toast.LENGTH_LONG).show();
             }
         };
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(itemToucherHelperCallback);
@@ -127,7 +127,6 @@ public class ListesCourse extends Activity {
         if (c.moveToFirst()) {
             do {
                 mesCourses.add(c.getString(c.getColumnIndex(MesCoursesManager.KEY_NOM_MAGASIN)));
-                Log.d("TUTUTUTUTUTUTUTUTU",c.getString(c.getColumnIndex(MesCoursesManager.KEY_NOM_MAGASIN)));
             }
             while (c.moveToNext());
         }

@@ -19,4 +19,14 @@
     <string name="ProduitNonRenseigné">Bitte geben Sie ein Produkt ein!</string>
     <string name="SuppListCourse">Möchten Sie diese Einkaufsliste löschen?</string>
     <string name="ElemSupprimé">Element gelöscht</string>
+    <string name="Supermarché">"Supermarkt bei : "</string>
+    <string name="SelectionnerRayon">"Bitte wählen Sie eine Abteilung!"</string>
+    <string name="FruitLegumes">"Früchte &amp; Gemüse"</string>
+    <string name="Surgelés">"Frisch gefroren"</string>
+    <string name="Boulangerie">"Bäckerei"</string>
+    <string name="Viande">"Fleisch"</string>
+    <string name="Poissons">"Fische"</string>
+    <string name="Crémerie">"Molkerei"</string>
+    <string name="HygièneBeauté">"Hygiene &amp; Schönheit"</string>
+    <string name="Autres">"Andere"</string>
 </resources>

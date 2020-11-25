@@ -9,6 +9,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class MesCoursesManager {
 
@@ -16,11 +17,13 @@ public class MesCoursesManager {
     public static final String KEY_ID_COURSES="idCourse";
     public static final String KEY_NOM_MAGASIN="nomMagasin";
     public static final String KEY_NOM_PRODUIT="nomProduit";
+    public static final String KEY_NOM_RAYON="rayon";
     public static final String CREATE_TABLE_COURSES = "CREATE TABLE "+TABLE_NAME+
             " (" +
             " "+KEY_ID_COURSES +" INTEGER primary key," +
             " "+KEY_NOM_MAGASIN +" TEXT," +
-            " "+KEY_NOM_PRODUIT +" TEXT" +
+            " "+KEY_NOM_PRODUIT +" TEXT," +
+            " "+KEY_NOM_RAYON +" TEXT" +
             ");";
     private MySQLite maBaseSQLite; // notre gestionnaire du fichier SQLite
     public SQLiteDatabase db;
@@ -51,7 +54,8 @@ public class MesCoursesManager {
         ContentValues values = new ContentValues();
         values.put("nomMagasin", mesCourses.getNomMagasin());
         values.put("nomProduit", mesCourses.getNomProduit());
-
+        values.put("rayon", mesCourses.getRayon());
+        Log.d("RAYOOOOOOON", values.get("rayon").toString());
         // Parcours des produits de la table pour voir si il existe déjà ou si il est vide
         // Auquel cas on fais un toast et on ne l'ajoute pas
         if (c.moveToFirst()) {
@@ -61,6 +65,9 @@ public class MesCoursesManager {
                 }
                 if (values.get("nomProduit").toString().equals("")) {
                     return -3;
+                }
+                if (values.get("rayon").toString().equals("")) {
+                    return -4;
                 }
             }
             while (c.moveToNext());
@@ -77,6 +84,7 @@ public class MesCoursesManager {
         ContentValues values = new ContentValues();
         values.put("nomMagasin", mesCourses.getNomMagasin());
         values.put("nomProduit", mesCourses.getNomProduit());
+        values.put("rayon", mesCourses.getRayon());
 
         String where = "idCourse"+" = ?";
         String[] whereArgs = {mesCourses.getIdCourses()+""};
@@ -95,16 +103,32 @@ public class MesCoursesManager {
     public ArrayList<String> getListePourMagasin(String nomMagasin) {
         // Retourne la ligne dont l'id est passé en paramètre
 
-        ArrayList<String> listePourMagasin = new ArrayList<>();
+        ArrayList<String> listePourMagasin= new ArrayList<>();
 
         Cursor c = db.rawQuery("SELECT * FROM Courses", null);
         if (c.moveToFirst()) {
             do {
-                if(c.getString(c.getColumnIndex("nomMagasin")).equals(nomMagasin)) {
+                if(c.getString(c.getColumnIndex("nomMagasin")).equals(nomMagasin)){
                     listePourMagasin.add(c.getString(c.getColumnIndex("nomProduit")));
                 }
             } while (c.moveToNext());
+        }
+        c.close();
+        return listePourMagasin;
+    }
 
+    public ArrayList<String> getListePourMagasinFiltre(String nomMagasin, String filtre) {
+        // Retourne la ligne dont l'id est passé en paramètre
+
+        ArrayList<String> listePourMagasin= new ArrayList<>();
+
+        Cursor c = db.rawQuery("SELECT * FROM Courses WHERE rayon = ? ", new String[] {String.valueOf(filtre)});
+        if (c.moveToFirst()) {
+            do {
+                if(c.getString(c.getColumnIndex("nomMagasin")).equals(nomMagasin)){
+                    listePourMagasin.add(c.getString(c.getColumnIndex("nomProduit")));
+                }
+            } while (c.moveToNext());
         }
         c.close();
         return listePourMagasin;
@@ -117,7 +141,7 @@ public class MesCoursesManager {
 
     public Cursor getAllListeCourses() {
         // sélection de tous les enregistrements de la table
-        return db.rawQuery("SELECT nomMagasin, nomProduit FROM Courses", null);
+        return db.rawQuery("SELECT nomMagasin, nomProduit, rayon FROM Courses", null);
     }
 
     public void supprimerListeCourse(String nomMag){

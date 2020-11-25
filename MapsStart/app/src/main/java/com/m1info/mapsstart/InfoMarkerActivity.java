@@ -108,7 +108,7 @@ public class InfoMarkerActivity extends AppCompatActivity implements Serializabl
             if(opHours != null){
                 // Remplir le TextView avant la liste pour lui donner un titre
                 TextView opHoursTitle = (TextView)findViewById(R.id.opHours);
-                opHoursTitle.setText(getText(R.string.opHours));
+                opHoursTitle.setText(R.string.opHours);
 
                 // Créer l'adapter pour remplir la listview
                 ArrayAdapter<String> arrayAdapter1 = new ArrayAdapter<String>(

@@ -1,6 +1,6 @@
 <resources>
-    <string name="app_name">EasyCourses</string>
-    <string name="title_activity_maps">EasyCourses</string>
+    <string name="app_name">meZemplettes</string>
+    <string name="title_activity_maps">meZemplettes</string>
     <string name="default_info_title">Titre par défaut</string>
     <string name="default_info_snippet">Défaut snippet</string>
     <string name="ajouter_une_liste">Ajouter une liste</string>
@@ -19,7 +19,15 @@
     <string name="ProduitNonRenseigné">Veuillez renseigner un produit !</string>
     <string name="SuppListCourse">Voulez vous supprimer cette liste de course ?</string>
     <string name="ElemSupprimé">Element supprimé</string>
-
-
+    <string name="Supermarché">"Supermarché au : "</string>
+    <string name="SelectionnerRayon">"Veuillez sélectionner un rayon !"</string>
+    <string name="FruitLegumes">"Fruits &amp; Légumes"</string>
+    <string name="Surgelés">"Surgelé"</string>
+    <string name="Boulangerie">"Boulangerie"</string>
+    <string name="Viande">"Viande"</string>
+    <string name="Poissons">"Poissons"</string>
+    <string name="Crémerie">"Crémerie"</string>
+    <string name="HygièneBeauté">"Hygiène &amp; Beauté"</string>
+    <string name="Autres">"Autres"</string>
 
 </resources>
