@@ -53,10 +53,23 @@
                 android:layout_gravity="center"
                 android:adjustViewBounds="true"
                 android:background="@null"
-                android:onClick="onButtonClick"
+                android:onClick="onButtonAddClick"
                 android:scaleType="centerInside"
                 android:src="@drawable/add"
                 android:visibility="invisible" />
+
+            <ImageButton
+                android:id="@+id/fav"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_gravity="center"
+                android:adjustViewBounds="true"
+                android:background="@null"
+                android:onClick="onButtonFavClick"
+                android:scaleType="centerInside"
+                android:src="@drawable/favoff"
+                android:visibility="invisible" />
+
         </LinearLayout>
     </RelativeLayout>
 </LinearLayout>

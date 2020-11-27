@@ -1,12 +1,16 @@
 package com.m1info.mapsstart;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.location.Location;
 import android.media.Rating;
 import android.os.Bundle;
@@ -69,12 +73,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private List[] mLikelyPlaceTypes;
     private HashMap<String,InfoMarker> listInfoMarker = new HashMap<String,InfoMarker>();
     private String storeName;
+    private LatLng storeLatLng;
+    private String storeAdresse;
     private String[] mLikelyPlacePhone;
     private String[] mLikelyPlaceWebsite;
     private String[] mLikelyPlaceBusinessStatus;
     private String[] mLikelyPlaceRating;
     private List<String>[] mLikelyPlaceOpHours;
     private Toast mToastToShow;
+
 
 
     @Override
@@ -129,13 +136,54 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     // et la création d'un intent vers l'activité AjouterListeCourse.
     // L'intent prend le nom de ses extras permettant un saisie plus rapide d'une liste
     // de course sur le lieu.
-    public void onButtonClick(View view) {
+    public void onButtonAddClick(View view) {
 
         Intent intent=new Intent(MapsActivity.this,AjouterListeCourse.class);
         intent.putExtra("storeName", storeName);
         startActivityForResult(intent, 2);
 
     }
+
+    public void onButtonFavClick(View view) {
+        MesMarkersManager mmm = new MesMarkersManager(this);
+        mmm.open();
+        ImageButton favButton = findViewById(R.id.fav);
+        if (mmm.checkMarker(storeName) == true)
+        {
+            new AlertDialog.Builder(MapsActivity.this)
+                    .setTitle("Attention")
+                    .setMessage("Voulez vous vraiment supprimer ce magasin de vos favoris ?")
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            mmm.supMarkerParMagasin(storeName);
+                            favButton.setImageResource(R.drawable.favoff);
+                        }
+                    })
+                    .setNegativeButton(android.R.string.no, null)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+        }
+
+        else
+        {
+            new AlertDialog.Builder(MapsActivity.this)
+                    .setTitle("Favoris")
+                    .setMessage("Ajouter ce magasin a vos favoris ?")
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            mmm.addElemMarker( new MesMarkers(0, storeName, String.valueOf(storeLatLng.latitude), String.valueOf(storeLatLng.longitude), storeAdresse));
+                            favButton.setImageResource(R.drawable.favon);
+                        }
+                    })
+                    .setNegativeButton(android.R.string.no, null)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+
+        }
+
+    }
+
+
 
     public void onSecondButtonClick(View view) {
 
@@ -243,6 +291,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         updateLocationUI();
         getDeviceLocation();
         showCurrentPlace();
+        showFav();
         googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener()
         {
             @Override
@@ -250,6 +299,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             {
                 ImageButton ajouterButton = (ImageButton) findViewById(R.id.ajouter);
                 ajouterButton.setVisibility(View.INVISIBLE);
+                ImageButton favButton = (ImageButton) findViewById(R.id.fav);
+                favButton.setVisibility(View.INVISIBLE);
             }
         });
         // La pop up et son temps d'affichage
@@ -425,6 +476,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     // Fonction permettant l'apparition du bouton "+" donnant accès à l'ajout d'une liste de courses
     // quand l'utilisateur selectionne un supermarché.
     public boolean onMarkerClick(final Marker marker) {
+
+        MesMarkersManager mmm = new MesMarkersManager(this);
+        mmm.open();
+
         ImageButton ajouterButton = (ImageButton) findViewById(R.id.ajouter);
         ajouterButton.setVisibility(View.INVISIBLE);
         if(!marker.getTitle().equals("Votre position")) {
@@ -432,6 +487,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             storeName = marker.getTitle();
             Log.d(TAG, "" + marker.getTitle());
         }
+
+        ImageButton favButton = (ImageButton) findViewById(R.id.fav);
+        favButton.setVisibility(View.INVISIBLE);
+
+        if(!marker.getTitle().equals("Votre position")) {
+            favButton.setImageResource(R.drawable.favoff);
+            if( mmm.checkMarker(marker.getTitle()) == true)
+            {
+                favButton.setImageResource(R.drawable.favon);
+            }
+            favButton.setVisibility(View.VISIBLE);
+            storeName = marker.getTitle();
+            storeLatLng = marker.getPosition();
+            storeAdresse = marker.getSnippet();
+            Log.d(TAG, "" + marker.getTitle());
+        }
+
         return false;
     }
 
@@ -443,6 +515,35 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             intent.putExtra("titleMarker", marker.getTitle());
             intent.putExtra("listInfoMarker", listInfoMarker);
             startActivity(intent);
+        }
+    }
+
+    public void showFav()
+    {
+        MesMarkersManager mmm = new MesMarkersManager(this);
+        mmm.open();
+        MesCoursesManager mcm  = new MesCoursesManager(this);
+
+        String magasin = "";
+        double latitude;
+        double longitude;
+        LatLng position;
+        String adresse = "";
+
+                Cursor c = mmm.getAllListeMarkers();
+        if (c.moveToFirst()) {
+            do {
+                magasin = c.getString(c.getColumnIndex(MesMarkersManager.KEY_NOM_MAGASIN));
+                latitude = Double.parseDouble(c.getString(c.getColumnIndex(MesMarkersManager.KEY_LAT_MARKER))) ;
+                longitude = Double.parseDouble(c.getString(c.getColumnIndex(MesMarkersManager.KEY_LNG_MARKER))) ;
+                adresse = c.getString(c.getColumnIndex(MesMarkersManager.KEY_ADRESSE));
+                position = new LatLng(latitude,longitude);
+
+                MarkerOptions markerOptions = new MarkerOptions().position(position).title(magasin).snippet(adresse).icon(BitmapDescriptorFactory.fromResource(R.drawable.supermarket));
+                mMap.addMarker(markerOptions);
+                mMap.setOnMarkerClickListener(this);
+            }
+            while (c.moveToNext());
         }
     }
 

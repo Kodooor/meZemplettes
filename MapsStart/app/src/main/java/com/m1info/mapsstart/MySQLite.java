@@ -8,7 +8,7 @@ import android.util.Log;
 public class MySQLite extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "db.sqlite";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     private static MySQLite sInstance;
 
     public static synchronized MySQLite getInstance(Context context) {
@@ -26,6 +26,7 @@ public class MySQLite extends SQLiteOpenHelper {
         // Création de la base de données
         // on exécute ici les requêtes de création des tables
         sqLiteDatabase.execSQL(MesCoursesManager.CREATE_TABLE_COURSES);
+        sqLiteDatabase.execSQL(MesMarkersManager.CREATE_TABLE_MARKERS);
         Log.d("AZERYIOP","fdgsfuidsifhdsuifhsdif");
     }
 
