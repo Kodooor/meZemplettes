@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.media.Rating;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -17,6 +18,7 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
@@ -40,6 +42,7 @@ import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest;
 import com.google.android.libraries.places.api.net.FindCurrentPlaceResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -71,11 +74,42 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private String[] mLikelyPlaceBusinessStatus;
     private String[] mLikelyPlaceRating;
     private List<String>[] mLikelyPlaceOpHours;
+    private Toast mToastToShow;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
+        // Initialisation du Fragment AutoComplete des places
+        AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
+                getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
+        // Filtre sur les etablissements.
+        autocompleteFragment.setTypeFilter(TypeFilter.ESTABLISHMENT);
+        autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG, Place.Field.ADDRESS, Place.Field.TYPES));
+        // Filtre sur la France (peut etre étendu)
+        autocompleteFragment.setCountries("FR");
+
+        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+                //Log.i(TAG, "Place: " + place.getName() + ", " + place.getId() + ", " + place.getLatLng() + ", " + place.getLatLng() + ", " + place.getTypes());
+
+                MarkerOptions markerOptions = new MarkerOptions().position(new LatLng(place.getLatLng().latitude, place.getLatLng().longitude)).title(place.getName()).snippet(place.getAddress()).icon(BitmapDescriptorFactory.fromResource(R.drawable.supermarket));
+                mMap.addMarker(markerOptions);
+
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                        new LatLng(place.getLatLng().latitude,
+                                place.getLatLng().longitude), 14f));
+            }
+
+            @Override
+            public void onError(Status status) {
+                // TODO: Handle the error.
+                Log.i(TAG, "An error occurred: " + status);
+            }
+        });
 
         // Coordonées par défaut de l'application sur Berlin.
         mDefaultLocation = new LatLng(52.530644,	13.383068);
@@ -185,13 +219,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 new LatLng(mLastKnownLocation.getLatitude(),
                                         mLastKnownLocation.getLongitude()), 14f));
 
-                        /*
-                        mMap.addMarker(new MarkerOptions().position(new LatLng(mLastKnownLocation.getLatitude(),mLastKnownLocation.getLongitude()+0.008)).title("Your are here !").snippet("and snippet").icon(BitmapDescriptorFactory.fromResource(R.drawable.supermarket)));
-                        mMap.addMarker(new MarkerOptions().position(new LatLng(mLastKnownLocation.getLatitude(),mLastKnownLocation.getLongitude()-0.008)).title("Your are here !").snippet("and snippet").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-                        mMap.addMarker(new MarkerOptions().position(new LatLng(mLastKnownLocation.getLatitude()+0.008,mLastKnownLocation.getLongitude())).title("Your are here !").snippet("and snippet").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-                        mMap.addMarker(new MarkerOptions().position(new LatLng(mLastKnownLocation.getLatitude()-0.008,mLastKnownLocation.getLongitude())).title("Your are here !").snippet("and snippet").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-                        */
-
                     } else {
                         Log.d(TAG, "Localisation null, utilisatation de la valeur par défaut");
                         Log.e(TAG, "Exception: %s", task.getException());
@@ -225,6 +252,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 ajouterButton.setVisibility(View.INVISIBLE);
             }
         });
+        // La pop up et son temps d'affichage
+        int toastDurationInMilliSeconds = 10000;
+        mToastToShow = Toast.makeText(this, "Les supermarchés les plus proches. Si aucun ne vous plait, recherchez celui que vous desirez !", Toast.LENGTH_LONG);
+
+        CountDownTimer toastCountDown;
+        toastCountDown = new CountDownTimer(toastDurationInMilliSeconds, 1000) {
+            public void onTick(long millisUntilFinished) {
+                mToastToShow.show();
+            }
+            public void onFinish() {
+                mToastToShow.cancel();
+            }
+        };
+
+        // Affichage de la pop up et demarrage du chrono
+        mToastToShow.show();
+        toastCountDown.start();
+
         mMap.setOnInfoWindowClickListener(this);
     }
 
@@ -299,7 +344,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     // Parcours des differents lieux trouvés
                     for (PlaceLikelihood placeLikelihood : likelyPlaces.getPlaceLikelihoods()) {
 
-//                       if(placeLikelihood.getPlace().getTypes().contains(supermarketCheck) || placeLikelihood.getPlace().getTypes().contains(storeCheck)) {
+                       if(placeLikelihood.getPlace().getTypes().contains(supermarketCheck) || placeLikelihood.getPlace().getTypes().contains(storeCheck)) {
                            /*List<Place.Type> typesP = placeLikelihood.getPlace().getTypes();
                            Log.d(TAG, "Type : " + typesP);
                            Log.d(TAG, "Nom : " + placeLikelihood.getPlace().getName());
@@ -319,8 +364,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                            mLikelyPlaceAddresses[i] = placeLikelihood.getPlace().getAddress();
                            mLikelyPlaceAttributions[i] = placeLikelihood.getPlace().getAttributions();
                            mLikelyPlaceLatLngs[i] = placeLikelihood.getPlace().getLatLng();
-
-
                            mLikelyPlacePhone[i] = placeLikelihood.getPlace().getPhoneNumber();
 
                            if(placeLikelihood.getPlace().getOpeningHours() != null)
@@ -360,7 +403,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             if (i > (count - 1)) {
                                 break;
                             }
-//                       } // endif supermarket
+                       } // endif supermarket
                     }
                 }
                 else {

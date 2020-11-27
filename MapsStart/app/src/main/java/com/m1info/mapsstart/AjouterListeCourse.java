@@ -91,6 +91,7 @@ public class AjouterListeCourse extends Activity {
 
         MesCoursesManager mcm = new MesCoursesManager(this);
         mcm.open();
+        Log.d("places", monRayon.getSelectedItem().toString());
         long intReturn = mcm.addElemCourse(new MesCourses(0, nomCommerce.getText().toString(), produitCommerce.getText().toString(), monRayon.getSelectedItem().toString()));
         // PENSER A REGARDER QUE CEST AUSIS LE MEME MAGASIN
         if(intReturn == -2){
