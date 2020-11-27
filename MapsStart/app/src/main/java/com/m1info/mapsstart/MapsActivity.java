@@ -16,6 +16,8 @@ import android.media.Rating;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -129,6 +131,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+
 
     }
 
@@ -292,6 +296,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         getDeviceLocation();
         showCurrentPlace();
         showFav();
+        fillMenu();
         googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener()
         {
             @Override
@@ -522,7 +527,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     {
         MesMarkersManager mmm = new MesMarkersManager(this);
         mmm.open();
-        MesCoursesManager mcm  = new MesCoursesManager(this);
 
         String magasin = "";
         double latitude;
@@ -545,6 +549,55 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
             while (c.moveToNext());
         }
+    }
+
+    public void fillMenu()
+    {
+        ImageButton menufav = findViewById(R.id.menufav);
+        registerForContextMenu(menufav);
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        menu.setHeaderTitle("Mes favoris");
+
+        MesMarkersManager mmm = new MesMarkersManager(this);
+        mmm.open();
+
+        String magasin = "";
+
+        Cursor c = mmm.getAllListeMarkers();
+        if (c.moveToFirst()) {
+            do {
+                magasin = c.getString(c.getColumnIndex(MesMarkersManager.KEY_NOM_MAGASIN));
+
+                menu.add(0, v.getId(),0, magasin);
+
+            }
+            while (c.moveToNext());
+        }
+        mmm.close();
+    }
+    public boolean onContextItemSelected(MenuItem item) {
+        MesMarkersManager mmm = new MesMarkersManager(this);
+        mmm.open();
+        double latitude;
+        double longitude;
+        LatLng position;
+
+        Cursor c = mmm.getPositionWithName(item.getTitle().toString());
+        if (c.moveToFirst()) {
+            do {
+                latitude = Double.parseDouble(c.getString(c.getColumnIndex(MesMarkersManager.KEY_LAT_MARKER)));
+                longitude =Double.parseDouble(c.getString(c.getColumnIndex(MesMarkersManager.KEY_LNG_MARKER)));
+                position = new LatLng(latitude,longitude);
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                        position, 14f));
+            }
+            while (c.moveToNext());
+        }
+        return true;
     }
 
 }

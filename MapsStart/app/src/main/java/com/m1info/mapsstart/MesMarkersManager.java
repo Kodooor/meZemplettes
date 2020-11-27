@@ -90,6 +90,11 @@ public class MesMarkersManager {
         return db.rawQuery("SELECT nomMagasin, latMarker, lngMarker, adresse FROM Marker", null);
     }
 
+
+    public Cursor getPositionWithName(String nomMagasin) {
+        return db.rawQuery("SELECT latMarker, lngMarker FROM Marker WHERE nomMagasin = ?", new String[]{String.valueOf(nomMagasin)});
+    }
+
     public boolean checkMarker(String magasin)
     {
         boolean res;
@@ -110,6 +115,7 @@ public class MesMarkersManager {
         }
         return res;
     }
+
 
 }
 
