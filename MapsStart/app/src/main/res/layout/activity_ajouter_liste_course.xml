@@ -63,16 +63,16 @@
         android:layout_height="wrap_content"
         android:gravity="center">
         <Button
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="0.5"
             android:text="Ajouter Produit"
             android:onClick="ajouterElement"/>
         <Spinner
             android:id="@+id/filtre"
-            android:layout_width="50dp"
+            android:layout_width="0dp"
             android:layout_height="50dp"
-            android:adjustViewBounds="true"
-            android:background="@drawable/filtre"
+            android:layout_weight="0.5"
             android:spinnerMode="dropdown" />
     </LinearLayout>
 

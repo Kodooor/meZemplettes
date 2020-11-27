@@ -36,15 +36,15 @@ public class AjouterListeCourse extends Activity {
 
         //Spinner Rayons (dropdown)
         mesRayons = findViewById(R.id.rayon);
-        String[] rayons = new String[]{"", getString(R.string.FruitLegumes), getString(R.string.Surgelés), getString(R.string.Boulangerie), getString(R.string.Viande), getString(R.string.Poissons), getString(R.string.Autres)};
+        String[] rayons = new String[]{"", "Fruits & Légumes", getString(R.string.Surgelés), getString(R.string.Boulangerie), getString(R.string.Viande), getString(R.string.Poissons), getString(R.string.Crémerie), getString(R.string.HygièneBeauté), getString(R.string.Autres)};
         ArrayAdapter<String> adapterRayon = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, rayons);
         mesRayons.setAdapter(adapterRayon);
 
         //Spinner Filtre(dropdown)
         monFiltre = findViewById(R.id.filtre);
-        String[] filtre = new String[]{"",getString(R.string.FruitLegumes), getString(R.string.Surgelés), getString(R.string.Boulangerie), getString(R.string.Viande), getString(R.string.Poissons), getString(R.string.Crémerie), getString(R.string.HygièneBeauté), getString(R.string.Autres)};
-        ArrayAdapter<String> adapterFiltre = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, rayons);
-        monFiltre.setAdapter(adapterRayon);
+        String[] filtre = new String[]{"Filtrer",getString(R.string.FruitLegumes), getString(R.string.Surgelés), getString(R.string.Boulangerie), getString(R.string.Viande), getString(R.string.Poissons), getString(R.string.Crémerie), getString(R.string.HygièneBeauté), getString(R.string.Autres)};
+        ArrayAdapter<String> adapterFiltre = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, filtre);
+        monFiltre.setAdapter(adapterFiltre);
 
         // ListView des éléments
         listview = findViewById(R.id.elemCourse);
@@ -128,7 +128,7 @@ public class AjouterListeCourse extends Activity {
 
         if(intent.hasExtra("Magasin")){
             String donnee = intent.getStringExtra("Magasin"); // on récupère la valeur associée à la clé
-            if(!monFiltre.getSelectedItem().toString().equals("")){
+            if(!monFiltre.getSelectedItem().toString().equals("Filtrer")){
                 ArrayList<String> listePourMagasin = mcm.getListePourMagasinFiltre(donnee, monFiltre.getSelectedItem().toString());
                 for (int i = 0; i < listePourMagasin.size(); ++i) {
                     adapter.add(listePourMagasin.get(i));
@@ -145,7 +145,7 @@ public class AjouterListeCourse extends Activity {
         if(intent.hasExtra("storeName")){
             String donnee = intent.getStringExtra("storeName"); // on récupère la valeur associée à la clé
 
-            if(!monFiltre.getSelectedItem().toString().equals("")){
+            if(!monFiltre.getSelectedItem().toString().equals("Filtrer")){
                 ArrayList<String> listePourMagasin = mcm.getListePourMagasinFiltre(donnee, monFiltre.getSelectedItem().toString());
                 for (int i = 0; i < listePourMagasin.size(); ++i) {
                     adapter.add(listePourMagasin.get(i));

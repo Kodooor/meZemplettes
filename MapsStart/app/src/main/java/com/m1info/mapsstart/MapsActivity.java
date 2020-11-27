@@ -577,7 +577,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if(magasin.equals("")){
             menu.add(0,v.getId(),0,"Pas de favoris pour le moment");
         }
-        
+
         mmm.close();
     }
     public boolean onContextItemSelected(MenuItem item) {
