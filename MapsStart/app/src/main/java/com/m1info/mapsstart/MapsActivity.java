@@ -542,7 +542,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 longitude = Double.parseDouble(c.getString(c.getColumnIndex(MesMarkersManager.KEY_LNG_MARKER))) ;
                 adresse = c.getString(c.getColumnIndex(MesMarkersManager.KEY_ADRESSE));
                 position = new LatLng(latitude,longitude);
-
                 MarkerOptions markerOptions = new MarkerOptions().position(position).title(magasin).snippet(adresse).icon(BitmapDescriptorFactory.fromResource(R.drawable.supermarket));
                 mMap.addMarker(markerOptions);
                 mMap.setOnMarkerClickListener(this);
@@ -571,12 +570,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (c.moveToFirst()) {
             do {
                 magasin = c.getString(c.getColumnIndex(MesMarkersManager.KEY_NOM_MAGASIN));
-
-                menu.add(0, v.getId(),0, magasin);
-
+                menu.add(0,v.getId(),0,magasin);
             }
             while (c.moveToNext());
         }
+        if(magasin.equals("")){
+            menu.add(0,v.getId(),0,"Pas de favoris pour le moment");
+        }
+        
         mmm.close();
     }
     public boolean onContextItemSelected(MenuItem item) {
