@@ -9,10 +9,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -40,10 +42,11 @@ public class ListesCourse extends Activity {
             }
             while (c.moveToNext());
         }
+
         RecyclerViewAdapter adapter = new RecyclerViewAdapter(mesCourses);
         rvMesCourses.setAdapter(adapter);
-
         rvMesCourses.setLayoutManager(new LinearLayoutManager(this));
+
         adapter.setOnItemClickListener(new RecyclerViewAdapter.ClickListener(){
             @Override
             public void onItemClick(int position, View v) {
