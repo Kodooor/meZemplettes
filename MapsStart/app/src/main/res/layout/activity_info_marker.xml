@@ -22,10 +22,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <HorizontalScrollView
+    <ImageView
+        android:id="@+id/MarkerImage"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-
-
+        android:layout_height="wrap_content"/>
 
 </LinearLayout>

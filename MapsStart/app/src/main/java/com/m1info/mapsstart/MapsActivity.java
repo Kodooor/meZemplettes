@@ -73,15 +73,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private List[] mLikelyPlaceAttributions;
     private LatLng[] mLikelyPlaceLatLngs;
     private List[] mLikelyPlaceTypes;
-    private HashMap<String,InfoMarker> listInfoMarker = new HashMap<String,InfoMarker>();
+    private HashMap<String,String> listInfoMarker = new HashMap<>();
     private String storeName;
     private LatLng storeLatLng;
     private String storeAdresse;
-    private String[] mLikelyPlacePhone;
-    private String[] mLikelyPlaceWebsite;
-    private String[] mLikelyPlaceBusinessStatus;
-    private String[] mLikelyPlaceRating;
-    private List<String>[] mLikelyPlaceOpHours;
+    private String[] mLikelyPlaceID;
     private Toast mToastToShow;
 
 
@@ -343,11 +339,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     Place.Field.ADDRESS,
                     Place.Field.TYPES ,
                     Place.Field.LAT_LNG,
-//                    Place.Field.PHONE_NUMBER,
-                    Place.Field.RATING,
-//                    Place.Field.WEBSITE_URI,
-//                    Place.Field.OPENING_HOURS,
-                    Place.Field.BUSINESS_STATUS
+                    Place.Field.ID
             );
 
             // Création du la requete FindCurrentPlace
@@ -387,12 +379,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     mLikelyPlaceAddresses = new String[count];
                     mLikelyPlaceAttributions = new List[count];
                     mLikelyPlaceLatLngs = new LatLng[count];
-
-                    mLikelyPlaceOpHours = new ArrayList[count];
-                    mLikelyPlaceWebsite = new String[count];
-                    mLikelyPlaceBusinessStatus = new String[count];
-                    mLikelyPlaceRating = new String[count];
-                    mLikelyPlacePhone = new String[count];
+                    mLikelyPlaceID = new String[count];
 
                     Place.Type supermarketCheck = Place.Type.SUPERMARKET;
                     Place.Type storeCheck = Place.Type.STORE;
@@ -407,11 +394,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                            Log.d(TAG, "Adresse :  " + placeLikelihood.getPlace().getAddress());
                            Log.d(TAG, "Attributions : " + placeLikelihood.getPlace().getAttributions());
                            Log.d(TAG, "LatLng :  " + placeLikelihood.getPlace().getLatLng());
-
-                           Log.d(TAG, "phone :  " + placeLikelihood.getPlace().getPhoneNumber());
-                           Log.d(TAG, "rating :  " + placeLikelihood.getPlace().getRating());
-                           Log.d(TAG, "Website :  " + placeLikelihood.getPlace().getWebsiteUri());
-                           Log.d(TAG, "Business Status :  " + placeLikelihood.getPlace().getBusinessStatus());
                            Log.d(TAG, "===============================");*/
 
                            // Construction des lieux dans leurs listes respectives.
@@ -420,35 +402,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                            mLikelyPlaceAddresses[i] = placeLikelihood.getPlace().getAddress();
                            mLikelyPlaceAttributions[i] = placeLikelihood.getPlace().getAttributions();
                            mLikelyPlaceLatLngs[i] = placeLikelihood.getPlace().getLatLng();
-                           mLikelyPlacePhone[i] = placeLikelihood.getPlace().getPhoneNumber();
-
-                           if(placeLikelihood.getPlace().getOpeningHours() != null)
-                               mLikelyPlaceOpHours[i] = placeLikelihood.getPlace().getOpeningHours().getWeekdayText();
-                           if(placeLikelihood.getPlace().getRating() != null)
-                               mLikelyPlaceRating[i] = String.valueOf(placeLikelihood.getPlace().getRating());
-                           if(placeLikelihood.getPlace().getWebsiteUri() != null)
-                               mLikelyPlaceWebsite[i] = placeLikelihood.getPlace().getWebsiteUri().toString();
-                           if(placeLikelihood.getPlace().getBusinessStatus() != null) {
-                               mLikelyPlaceBusinessStatus[i] = placeLikelihood.getPlace().getBusinessStatus().toString();
-                               //String status[] = {"CLOSED_PERMANENTLY","CLOSED_TEMPORARILY","OPERATIONAL"};
-                               switch (mLikelyPlaceBusinessStatus[i]) {
-                                   case "CLOSED_PERMANENTLY":
-                                       mLikelyPlaceBusinessStatus[i] = getString(R.string.CLOSED_PERMANENTLY);
-                                       break;
-                                   case "CLOSED_TEMPORARILY":
-                                       mLikelyPlaceBusinessStatus[i] = getString(R.string.CLOSED_TEMPORARILY);
-                                       break;
-                                   case "OPERATIONAL":
-                                       mLikelyPlaceBusinessStatus[i] = getString(R.string.OPERATIONAL);
-                                       break;
-                                   default:
-                                       break;
-                               }
-                           }
+                           mLikelyPlaceID[i] = placeLikelihood.getPlace().getId();
 
                            // On remplit les informations collectées via la requête dans un tableau, afin de remplir notre listInfoMarker
-                           String[] infos = {mLikelyPlaceNames[i], mLikelyPlaceAddresses[i],mLikelyPlacePhone[i],mLikelyPlaceRating[i],mLikelyPlaceWebsite[i],mLikelyPlaceBusinessStatus[i]};
-                           listInfoMarker.put(mLikelyPlaceNames[i],new InfoMarker(infos,mLikelyPlaceOpHours[i]));
+                           listInfoMarker.put(mLikelyPlaceNames[i], mLikelyPlaceID[i]);
 
 
                             // Ajout des Markers des lieux sur la map.
