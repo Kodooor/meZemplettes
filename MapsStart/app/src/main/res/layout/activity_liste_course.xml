@@ -10,7 +10,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Mes listes de course"
+            android:text="@string/mesListesDeCourses"
             android:layout_marginTop="10dp"
             android:textSize="25sp"/>
     </LinearLayout>
