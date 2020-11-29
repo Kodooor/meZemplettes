@@ -4,6 +4,8 @@
     <string name="default_info_title">Standardtitel</string>
     <string name="default_info_snippet">Standard Snippet</string>
     <string name="ajouter_une_liste">Fügen Sie eine Liste hinzu</string>
+    <string name="editionListeCourse">Einkaufslistenausgabe</string>
+    <string name="magasin">Geschäft</string>
     <string name="adress">Adresse</string>
     <string name="phone">Telefon</string>
     <string name="rating">Bewertung</string>
@@ -29,4 +31,13 @@
     <string name="Crémerie">"Molkerei"</string>
     <string name="HygièneBeauté">"Hygiene &amp; Schönheit"</string>
     <string name="Autres">"Andere"</string>
+    <string name="elementAAcheter">Artikel zu kaufen</string>
+    <string name="rayon">Strahl</string>
+    <string name="ajouterProduit">Produkt hinzufügen</string>
+    <string name="valider">bestätigen</string>
+    <string name="mesListesDeCourses">meine Einkaufslisten</string>
+
+
+
+
 </resources>

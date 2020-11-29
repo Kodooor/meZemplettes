@@ -6,6 +6,8 @@
     <string name="ajouter_une_liste">Agregar una lista</string>
     <string name="adress">Dirección</string>
     <string name="phone">Teléfono</string>
+    <string name="editionListeCourse">edición de lista de compras</string>
+    <string name="magasin">tienda</string>
     <string name="rating">Calificación</string>
     <string name="website">Sitio web</string>
     <string name="businessStatus">Estado comercial</string>
@@ -29,4 +31,14 @@
     <string name="Crémerie">"Lechería"</string>
     <string name="HygièneBeauté">"Higiene &amp; Belleza"</string>
     <string name="Autres">"Otros"</string>
+    <string name="elementAAcheter">artículo para comprar</string>
+    <string name="rayon">Rayo</string>
+    <string name="ajouterProduit">Añadir Producto</string>
+    <string name="valider">Validar</string>
+    <string name="mesListesDeCourses">mis listas de compras</string>
+
+
+
+
+
 </resources>

@@ -6,6 +6,8 @@
     <string name="ajouter_une_liste">Add a list</string>
     <string name="adress">Address</string>
     <string name="phone">Phone</string>
+    <string name="editionListeCourse">shooping list edition</string>
+    <string name="magasin">shop</string>
     <string name="rating">Rating</string>
     <string name="website">Website</string>
     <string name="businessStatus">Business Status</string>
@@ -29,4 +31,12 @@
     <string name="Crémerie">"Creamery"</string>
     <string name="HygièneBeauté">"Hygiene &amp; Beauty"</string>
     <string name="Autres">"Other"</string>
+    <string name="elementAAcheter">item to buy</string>
+    <string name="rayon">Ray</string>
+    <string name="ajouterProduit">Add product</string>
+    <string name="valider">Validate</string>
+    <string name="mesListesDeCourses">My shooping lists</string>
+
+
+
 </resources>
