@@ -6,8 +6,11 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.icu.text.IDNA;
 import android.media.Rating;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
@@ -93,10 +96,12 @@ public class InfoMarkerActivity extends AppCompatActivity implements Serializabl
                 String address = place.getAddress();
                 String phone = place.getPhoneNumber();
                 String rating=null;
+                String website = null;
+
                 if(place.getRating()!=null)
                     rating = String.valueOf(place.getRating());
 
-                String website = null;
+
                 String businessStatus = null;
 
                 if(place.getWebsiteUri() != null)
@@ -150,6 +155,38 @@ public class InfoMarkerActivity extends AppCompatActivity implements Serializabl
                 }
                 mListView.setAdapter(adapter);
 
+                // On va pouvoir cliquer sur les éléments de notre liste
+                mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        HashMap<String,String> selectedItem = (HashMap<String,String>) parent.getItemAtPosition(position);
+                        Log.d(TAG, "selectedItem" + selectedItem);
+                        Log.d(TAG, "First Line" + selectedItem.get("First Line"));
+
+                        // Pour les éléments de la hashmap (couples Item/Subitem)
+                        for (Map.Entry<String, String> entry : selectedItem.entrySet()) {
+                            String key = entry.getKey();
+                            String value = entry.getValue();
+
+                            // Si l'élément est un site web
+                            if(selectedItem.get("First Line")==getString(R.string.website)){
+                                String website = selectedItem.get("Second Line");
+                                Intent i = new Intent(Intent.ACTION_VIEW);
+                                i.setData(Uri.parse(website));
+                                startActivity(i);
+                            }
+
+                            // Si l'élément est un numéro de téléphone
+                            if(selectedItem.get("First Line")==getString(R.string.phone)){
+                                String phone = selectedItem.get("Second Line");
+                                Log.d(TAG, "phone" + phone);
+                                Intent i = new Intent(Intent.ACTION_DIAL);
+                                i.setData(Uri.parse("tel:"+phone));
+                                startActivity(i);
+                            }
+                        }
+                    }
+                });
 
                 // Remplissage de la listView des horaires d'ouvertures
                 List<String> opHours;
@@ -173,18 +210,18 @@ public class InfoMarkerActivity extends AppCompatActivity implements Serializabl
                 // Ajouter l'image
                 markerImage = (ImageView) findViewById(R.id.MarkerImage);
 
-                // Get the photo metadata.
+                // On récupère les photoMetadata.
                 final List<PhotoMetadata> metadata = place.getPhotoMetadatas();
                 if (metadata == null || metadata.isEmpty()) {
-                    Log.w(TAG, "No photo metadata.");
+                    Log.w(TAG, "Pas de photoMetadata");
                     return;
                 }
                 final PhotoMetadata photoMetadata = metadata.get(0);
 
-                // Get the attribution text.
+                // On récupère les attribution des photoMetadata.
                 final String attributions = photoMetadata.getAttributions();
 
-                // Create a FetchPhotoRequest.
+                // On créé un FetchPhotoRequest.
                 final FetchPhotoRequest photoRequest = FetchPhotoRequest.builder(photoMetadata)
 //                        .setMaxWidth(500) // Optional.
 //                        .setMaxHeight(300) // Optional.
@@ -197,7 +234,6 @@ public class InfoMarkerActivity extends AppCompatActivity implements Serializabl
                         final ApiException apiException = (ApiException) exception;
                         Log.e(TAG, "Place not found: " + exception.getMessage());
                         final int statusCode = apiException.getStatusCode();
-                        // TODO: Handle error with given status code.
                     }
                 });
             });

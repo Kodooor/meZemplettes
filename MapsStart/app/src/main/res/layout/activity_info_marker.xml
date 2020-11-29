@@ -12,15 +12,23 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
+    <View style="@style/Divider"/>
+
     <TextView
         android:id="@+id/opHours"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        />
 
     <ListView
         android:id="@+id/listOpHours"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"/>
 
     <ImageView
         android:id="@+id/MarkerImage"
