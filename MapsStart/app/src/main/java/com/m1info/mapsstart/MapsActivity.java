@@ -100,7 +100,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
-                //Log.i(TAG, "Place: " + place.getName() + ", " + place.getId() + ", " + place.getLatLng() + ", " + place.getLatLng() + ", " + place.getTypes());
+                // Ajout du marker selon l'etablissement recherché
                 listInfoMarker.put(place.getName(), place.getId());
                 MarkerOptions markerOptions = new MarkerOptions().position(new LatLng(place.getLatLng().latitude, place.getLatLng().longitude)).title(place.getName()).snippet(place.getAddress()).icon(BitmapDescriptorFactory.fromResource(R.drawable.supermarket));
                 Marker marker = mMap.addMarker(markerOptions);
@@ -145,10 +145,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
+    // Fonction permettant de faire des actions sur les etablissements placés en favori
     public void onButtonFavClick(View view) {
+
         MesMarkersManager mmm = new MesMarkersManager(this);
         mmm.open();
         ImageButton favButton = findViewById(R.id.fav);
+        // Si l'etablissement est déjà en favori
+        // On le supprime de la base de données des favoris
         if (mmm.checkMarker(storeName) == true)
         {
             new AlertDialog.Builder(MapsActivity.this)
@@ -164,7 +168,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .show();
         }
-
+        // Sinon on l'ajoute.
         else
         {
             new AlertDialog.Builder(MapsActivity.this)
@@ -184,12 +188,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-
-
     public void onSecondButtonClick(View view) {
 
         Intent intent=new Intent(MapsActivity.this,ListesCourse.class);
-        startActivityForResult(intent, 2);// Activity is started with requestCode 2
+        startActivityForResult(intent, 2);
     }
 
     // Requete permettant d'avoir la permission d'utiliser la localisation de l'appareil
@@ -466,6 +468,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return false;
     }
 
+    // Fonction permettant de rejoindre l'activité des infos sur l'etablissement en cliquant sur la pop
+    // up en haut du Marker
     @Override
     public void onInfoWindowClick(Marker marker) {
 
@@ -477,6 +481,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+    // Fonction permettant de charger tous les favoris sur la map au demarrage de l'application
+    // En allant les chercher dans la base de données
     public void showFav()
     {
         MesMarkersManager mmm = new MesMarkersManager(this);
@@ -509,6 +515,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+    // Fonction permettant de remplir un menu avec tous les favoris.
+    // Permettant de pouvoir voyager entre tous les favoris de l'utilisateur
     public void fillMenu()
     {
         ImageButton menufav = findViewById(R.id.menufav);
@@ -524,7 +532,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mmm.open();
 
         String magasin = "";
-
+        // Recherche de tous les favoris.
         Cursor c = mmm.getAllListeMarkers();
         if (c.moveToFirst()) {
             do {
@@ -539,6 +547,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         mmm.close();
     }
+    // Voyage entre les differents points.
     public boolean onContextItemSelected(MenuItem item) {
         MesMarkersManager mmm = new MesMarkersManager(this);
         mmm.open();

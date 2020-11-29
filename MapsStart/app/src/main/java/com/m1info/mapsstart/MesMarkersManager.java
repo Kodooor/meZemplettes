@@ -51,7 +51,7 @@ public class MesMarkersManager {
 
 
     public long addElemMarker(MesMarkers mesMarkers) {
-        // Tous les produits
+        // Tous les markes
         Cursor c = getAllListeMarkers();
 
         // Ajout d'un enregistrement dans la table
@@ -63,8 +63,7 @@ public class MesMarkersManager {
         values.put("adresse", mesMarkers.getAdresse());
         Log.d("places", values.get("latMarker").toString() + ", " + values.get("lngMarker").toString());
 
-        // Parcours des produits de la table pour voir si il existe déjà ou si il est vide
-        // Auquel cas on fais un toast et on ne l'ajoute pas
+        // Parcours des markers de la table pour voir si il existe déjà ou si il est vide
         if (c.moveToFirst()) {
             do {
                 if (c.getString(c.getColumnIndex(MesMarkersManager.KEY_NOM_MAGASIN)).equals(values.get("nomMagasin").toString()) && c.getString(c.getColumnIndex(MesMarkersManager.KEY_LAT_MARKER)).equals(values.get("latMarker").toString()) && c.getString(c.getColumnIndex(MesMarkersManager.KEY_LNG_MARKER)).equals(values.get("lngMarker").toString())){
@@ -78,26 +77,28 @@ public class MesMarkersManager {
         return db.insert("Marker",null,values);
     }
 
-
+    // Supprimer un marker selon le nom du magasin
     public void supMarkerParMagasin(String magasin) {
         db.delete("Marker", "nomMagasin" + " = ?", new String[]{String.valueOf(magasin)});
     }
 
+    // Supprimer tous les markers
     public int suppTout(){
         return db.delete("Marker", null, null);
     }
 
-
+    // Obtention de tous les markers
     public Cursor getAllListeMarkers() {
         // sélection de tous les enregistrements de la table
         return db.rawQuery("SELECT idMagasin, nomMagasin, latMarker, lngMarker, adresse FROM Marker", null);
     }
 
-
+    // Obtention de la position du marker selon le nom du magasin passé
     public Cursor getPositionWithName(String nomMagasin) {
         return db.rawQuery("SELECT latMarker, lngMarker FROM Marker WHERE nomMagasin = ?", new String[]{String.valueOf(nomMagasin)});
     }
 
+    // Voir si le magasin passé en parametre est dans les favoris
     public boolean checkMarker(String magasin)
     {
         boolean res;
