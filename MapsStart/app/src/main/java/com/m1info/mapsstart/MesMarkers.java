@@ -3,14 +3,16 @@ package com.m1info.mapsstart;
 public class MesMarkers {
 
     private int idMarker;
+    private String idMagasin;
     private String nomMagasin;
     private String latMarker;
     private String lngMarker;
     private String adresse;
 
     // Constructeur
-    public MesMarkers(int idMarker, String nomMagasin, String latMarker, String lngMarker, String adresse) {
+    public MesMarkers(int idMarker, String idMagasin, String nomMagasin, String latMarker, String lngMarker, String adresse) {
         this.idMarker=idMarker;
+        this.idMagasin = idMagasin;
         this.nomMagasin=nomMagasin;
         this.latMarker=latMarker;
         this.lngMarker = lngMarker;
@@ -24,6 +26,15 @@ public class MesMarkers {
     public void setIdMarker(int id) {
         this.idMarker = id;
     }
+
+    public String getIdMagasin() {
+        return idMagasin;
+    }
+
+    public void setIdMagasin(String idMagasin) {
+        this.idMagasin = idMagasin;
+    }
+
 
     public String getNomMagasin() {
         return nomMagasin;

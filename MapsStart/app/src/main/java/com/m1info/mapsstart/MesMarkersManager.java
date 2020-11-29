@@ -15,6 +15,7 @@ public class MesMarkersManager {
 
     public static final String TABLE_NAME = "Marker";
     public static final String KEY_ID_MARKER="idMarker";
+    public static final String KEY_ID_MAGASIN="idMagasin";
     public static final String KEY_NOM_MAGASIN="nomMagasin";
     public static final String KEY_LAT_MARKER="latMarker";
     public static final String KEY_LNG_MARKER="lngMarker";
@@ -22,6 +23,7 @@ public class MesMarkersManager {
     public static final String CREATE_TABLE_MARKERS = "CREATE TABLE "+TABLE_NAME+
             " (" +
             " "+KEY_ID_MARKER +" INTEGER primary key," +
+            " "+KEY_ID_MAGASIN + " TEXT," +
             " "+KEY_NOM_MAGASIN +" TEXT," +
             " "+KEY_LAT_MARKER +" TEXT," +
             " "+KEY_LNG_MARKER +" TEXT," +
@@ -54,6 +56,7 @@ public class MesMarkersManager {
 
         // Ajout d'un enregistrement dans la table
         ContentValues values = new ContentValues();
+        values.put("idMagasin", mesMarkers.getIdMagasin());
         values.put("nomMagasin", mesMarkers.getNomMagasin());
         values.put("latMarker", mesMarkers.getLatMarker());
         values.put("lngMarker", mesMarkers.getLngMarker());
@@ -87,7 +90,7 @@ public class MesMarkersManager {
 
     public Cursor getAllListeMarkers() {
         // sélection de tous les enregistrements de la table
-        return db.rawQuery("SELECT nomMagasin, latMarker, lngMarker, adresse FROM Marker", null);
+        return db.rawQuery("SELECT idMagasin, nomMagasin, latMarker, lngMarker, adresse FROM Marker", null);
     }
 
 

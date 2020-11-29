@@ -74,6 +74,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LatLng[] mLikelyPlaceLatLngs;
     private List[] mLikelyPlaceTypes;
     private HashMap<String,String> listInfoMarker = new HashMap<>();
+    private String storeId;
     private String storeName;
     private LatLng storeLatLng;
     private String storeAdresse;
@@ -102,8 +103,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 //Log.i(TAG, "Place: " + place.getName() + ", " + place.getId() + ", " + place.getLatLng() + ", " + place.getLatLng() + ", " + place.getTypes());
                 listInfoMarker.put(place.getName(), place.getId());
                 MarkerOptions markerOptions = new MarkerOptions().position(new LatLng(place.getLatLng().latitude, place.getLatLng().longitude)).title(place.getName()).snippet(place.getAddress()).icon(BitmapDescriptorFactory.fromResource(R.drawable.supermarket));
-                mMap.addMarker(markerOptions);
-
+                Marker marker = mMap.addMarker(markerOptions);
+                marker.setTag(place.getId());
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
                         new LatLng(place.getLatLng().latitude,
                                 place.getLatLng().longitude), 14f));
@@ -171,7 +172,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     .setMessage("Ajouter ce magasin a vos favoris ?")
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
-                            mmm.addElemMarker( new MesMarkers(0, storeName, String.valueOf(storeLatLng.latitude), String.valueOf(storeLatLng.longitude), storeAdresse));
+                            mmm.addElemMarker( new MesMarkers( 0,storeId, storeName, String.valueOf(storeLatLng.latitude), String.valueOf(storeLatLng.longitude), storeAdresse));
                             favButton.setImageResource(R.drawable.favon);
                         }
                     })
@@ -404,7 +405,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                             // Ajout des Markers des lieux sur la map.
                             MarkerOptions markerOptions = new MarkerOptions().position(mLikelyPlaceLatLngs[i]).title(mLikelyPlaceNames[i]).snippet(mLikelyPlaceAddresses[i]).icon(BitmapDescriptorFactory.fromResource(R.drawable.supermarket));
-                            mMap.addMarker(markerOptions);
+                            Marker marker = mMap.addMarker(markerOptions);
+                            marker.setTag(mLikelyPlaceID[i]);
                             mMap.setOnMarkerClickListener(this);
                             i++;
                             if (i > (count - 1)) {
@@ -441,6 +443,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if(!marker.getTitle().equals("Votre position")) {
             ajouterButton.setVisibility(View.VISIBLE);
             storeName = marker.getTitle();
+            storeId = (String)marker.getTag();
             Log.d(TAG, "" + marker.getTitle());
         }
 
@@ -479,6 +482,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         MesMarkersManager mmm = new MesMarkersManager(this);
         mmm.open();
 
+        String idMagasin = "";
         String magasin = "";
         double latitude;
         double longitude;
@@ -488,13 +492,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Cursor c = mmm.getAllListeMarkers();
         if (c.moveToFirst()) {
             do {
+
+                idMagasin = c.getString(c.getColumnIndex(MesMarkersManager.KEY_ID_MAGASIN));
                 magasin = c.getString(c.getColumnIndex(MesMarkersManager.KEY_NOM_MAGASIN));
                 latitude = Double.parseDouble(c.getString(c.getColumnIndex(MesMarkersManager.KEY_LAT_MARKER))) ;
                 longitude = Double.parseDouble(c.getString(c.getColumnIndex(MesMarkersManager.KEY_LNG_MARKER))) ;
                 adresse = c.getString(c.getColumnIndex(MesMarkersManager.KEY_ADRESSE));
                 position = new LatLng(latitude,longitude);
+                listInfoMarker.put(magasin,idMagasin );
                 MarkerOptions markerOptions = new MarkerOptions().position(position).title(magasin).snippet(adresse).icon(BitmapDescriptorFactory.fromResource(R.drawable.supermarket));
-                mMap.addMarker(markerOptions);
+                Marker marker = mMap.addMarker(markerOptions);
+                marker.setTag(idMagasin);
                 mMap.setOnMarkerClickListener(this);
             }
             while (c.moveToNext());
