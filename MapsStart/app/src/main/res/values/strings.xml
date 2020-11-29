@@ -5,6 +5,8 @@
     <string name="default_info_snippet">Défaut snippet</string>
     <string name="ajouter_une_liste">Ajouter une liste</string>
     <string name="adress">Adresse</string>
+    <string name="editionListeCourse">Edition liste de course</string>
+    <string name="magasin">Magasin</string>
     <string name="phone">Téléphone</string>
     <string name="rating">Note</string>
     <string name="website">Site Web</string>
@@ -29,5 +31,12 @@
     <string name="Crémerie">"Crémerie"</string>
     <string name="HygièneBeauté">"Hygiène &amp; Beauté"</string>
     <string name="Autres">"Autres"</string>
+    <string name="elementAAcheter">Element à acheter</string>
+    <string name="rayon">Rayon</string>
+    <string name="ajouterProduit">Ajouter produit</string>
+    <string name="valider">Valider</string>
+    <string name="mesListesDeCourses">Mes listes de courses</string>
+
+
 
 </resources>
