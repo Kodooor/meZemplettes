@@ -100,7 +100,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onPlaceSelected(Place place) {
                 //Log.i(TAG, "Place: " + place.getName() + ", " + place.getId() + ", " + place.getLatLng() + ", " + place.getLatLng() + ", " + place.getTypes());
-
+                listInfoMarker.put(place.getName(), place.getId());
                 MarkerOptions markerOptions = new MarkerOptions().position(new LatLng(place.getLatLng().latitude, place.getLatLng().longitude)).title(place.getName()).snippet(place.getAddress()).icon(BitmapDescriptorFactory.fromResource(R.drawable.supermarket));
                 mMap.addMarker(markerOptions);
 
@@ -288,6 +288,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
 
         mMap = googleMap;
+        getLocationPermission();
         updateLocationUI();
         getDeviceLocation();
         showCurrentPlace();
@@ -388,13 +389,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     for (PlaceLikelihood placeLikelihood : likelyPlaces.getPlaceLikelihoods()) {
 
                        if(placeLikelihood.getPlace().getTypes().contains(supermarketCheck) || placeLikelihood.getPlace().getTypes().contains(storeCheck)) {
-                           /*List<Place.Type> typesP = placeLikelihood.getPlace().getTypes();
-                           Log.d(TAG, "Type : " + typesP);
-                           Log.d(TAG, "Nom : " + placeLikelihood.getPlace().getName());
-                           Log.d(TAG, "Adresse :  " + placeLikelihood.getPlace().getAddress());
-                           Log.d(TAG, "Attributions : " + placeLikelihood.getPlace().getAttributions());
-                           Log.d(TAG, "LatLng :  " + placeLikelihood.getPlace().getLatLng());
-                           Log.d(TAG, "===============================");*/
 
                            // Construction des lieux dans leurs listes respectives.
                            mLikelyPlaceNames[i] = placeLikelihood.getPlace().getName();
