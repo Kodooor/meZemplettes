@@ -1,5 +1,6 @@
 package com.m1info.mapsstart;
 
+// Notre classe MesCourses, représentant notre Entité "MesCourses" et ses attributs (idCourses, nomMagasin, nomProduit, rayon)
 public class MesCourses {
 
     private int idCourses;
@@ -15,6 +16,7 @@ public class MesCourses {
         this.rayon = rayon;
     }
 
+    // Getteurs / setteurs
     public int getIdCourses() {
         return idCourses;
     }

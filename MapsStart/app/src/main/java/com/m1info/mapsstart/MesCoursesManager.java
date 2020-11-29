@@ -11,13 +11,19 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+// Classe regroupant toutes les fonctions intéragissant avec la base de données
 public class MesCoursesManager {
 
+    // Le nom de notre table de données
     public static final String TABLE_NAME = "Courses";
+
+    // Nos colonnes
     public static final String KEY_ID_COURSES="idCourse";
     public static final String KEY_NOM_MAGASIN="nomMagasin";
     public static final String KEY_NOM_PRODUIT="nomProduit";
     public static final String KEY_NOM_RAYON="rayon";
+
+    // La création de notre table avec nos colonnes
     public static final String CREATE_TABLE_COURSES = "CREATE TABLE "+TABLE_NAME+
             " (" +
             " "+KEY_ID_COURSES +" INTEGER primary key," +
@@ -26,6 +32,8 @@ public class MesCoursesManager {
             " "+KEY_NOM_RAYON +" TEXT" +
             ");";
     private MySQLite maBaseSQLite; // notre gestionnaire du fichier SQLite
+
+    // Notre variable permettant d'intéragir avec la base de données
     public SQLiteDatabase db;
 
     // Constructeur
@@ -34,18 +42,21 @@ public class MesCoursesManager {
         maBaseSQLite = MySQLite.getInstance(context);
     }
 
+    // Fonction d'ouverture de la base de données
     public void open()
     {
         db = maBaseSQLite.getWritableDatabase();
 
     }
 
+    // Fonction de fermeture de la base de données
     public void close()
     {
         db.close();
     }
 
 
+    // Fonction permettant d'ajouter un élément à notre base de données
     public long addElemCourse(MesCourses mesCourses) {
         // Tous les produits
         Cursor c = getAllListeCourses();
@@ -55,7 +66,6 @@ public class MesCoursesManager {
         values.put("nomMagasin", mesCourses.getNomMagasin());
         values.put("nomProduit", mesCourses.getNomProduit());
         values.put("rayon", mesCourses.getRayon());
-        Log.d("RAYOOOOOOON", values.get("rayon").toString());
         // Parcours des produits de la table pour voir si il existe déjà ou si il est vide
         // Auquel cas on fais un toast et on ne l'ajoute pas
         if (c.moveToFirst()) {
@@ -72,34 +82,17 @@ public class MesCoursesManager {
             }
             while (c.moveToNext());
         }
-        // insert() retourne l'id du nouvel enregistrement inséré, ou -1 en cas d'erreur
 
+        // insert() retourne l'id du nouvel enregistrement inséré, ou -1 en cas d'erreur
         return db.insert("Courses",null,values);
     }
 
-    public int modElemCourse(MesCourses mesCourses) {
-        // modification d'un enregistrement
-        // valeur de retour : (int) nombre de lignes affectées par la requête
-
-        ContentValues values = new ContentValues();
-        values.put("nomMagasin", mesCourses.getNomMagasin());
-        values.put("nomProduit", mesCourses.getNomProduit());
-        values.put("rayon", mesCourses.getRayon());
-
-        String where = "idCourse"+" = ?";
-        String[] whereArgs = {mesCourses.getIdCourses()+""};
-
-        return db.update("Courses", values, where, whereArgs);
-    }
-
+    // Fonction qui supprime un produit dans une liste de course
     public void supElemCourseParProduit(String produit) {
         db.delete("Courses", "nomProduit" + " = ?", new String[]{String.valueOf(produit)});
     }
 
-    public int suppTout(){
-        return db.delete("Courses", null, null);
-    }
-
+    // Fonction qui retourne les éléments d'une liste de course en fonction du magasin passé en paramètre
     public ArrayList<String> getListePourMagasin(String nomMagasin) {
         // Retourne la ligne dont l'id est passé en paramètre
 
@@ -117,6 +110,7 @@ public class MesCoursesManager {
         return listePourMagasin;
     }
 
+    // Fonction qui retourne les éléments d'une liste de course en fonction du magasin et du filtre appliqué passé en paramètre
     public ArrayList<String> getListePourMagasinFiltre(String nomMagasin, String filtre) {
         // Retourne la ligne dont l'id est passé en paramètre
 
@@ -134,16 +128,19 @@ public class MesCoursesManager {
         return listePourMagasin;
     }
 
+    // Fonction qui retourne tous les magasins pour lesquels une liste de course est crée
     public Cursor getMagasinListeCourses() {
         // sélection de tous les enregistrements de la table
         return db.rawQuery("SELECT DISTINCT(nomMagasin) FROM Courses", null);
     }
 
+    // Fonction qui retourne toutes les lignes et toutes les colonnes de la base de données
     public Cursor getAllListeCourses() {
         // sélection de tous les enregistrements de la table
         return db.rawQuery("SELECT nomMagasin, nomProduit, rayon FROM Courses", null);
     }
 
+    // Fonction qui supprime une liste de course par rapport au magasin
     public void supprimerListeCourse(String nomMag){
         db.delete("Courses", "nomMagasin" + " = ?", new String[]{String.valueOf(nomMag)});
     }
